@@ -43,7 +43,7 @@ dumbbell_chart(popeurope,
 
 
 library(ggmosaic)
-
+library(ggalluvial)
 ggplot(data = titanic) +
   geom_mosaic(aes(x = product(Sex),
                   fill = Survived))
