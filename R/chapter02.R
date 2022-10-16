@@ -1,39 +1,85 @@
-#PracticeR Chapter 2
-
-#library#######
-library(tidyverse)
-library(palmerpenguins)
+#library(tidyverse)
+#library(palmerpenguins)
 
 
+#knitr::opts_chunk$set(echo = FALSE)
 
-#Use R as a calculator!
-# Apply basic operations: +,-,*,/ 
-5 * 188 
+#options(max.print = 100)
+options(tibble.print_max = 25, tibble.print_min = 5)
+
+#knitr::opts_chunk$set(echo = FALSE)
+
+
+knitr::opts_chunk$set(
+  fig.process = function(filename) {
+    new_filename <- stringr::str_remove(
+      string = filename,
+      pattern = "-1"
+    )
+    fs::file_move(path = filename, new_path = new_filename)
+    ifelse(fs::file_exists(new_filename), new_filename, filename)
+  }
+)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.height = 4,
+  fig.path = "images/",
+  cache = TRUE,
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  eval = TRUE
+)
+
+#theme_set(theme_minimal()) # sets a default ggplot theme
+
+#data###
+
+
+#english environment
+Sys.setenv(LANG = "en")
+knitr::opts_chunk$set(tidy = "styler")
+
+
+## # 2.1 Introducing R and RStudio ################################################
+
+#Install R:
+#https://www.r-project.org/
+
+knitr::include_graphics('images/Fig21.png')
+
+# Basic operations: +,-,*,/ 
+5 * 5 
 #Powers
 3^2              
 #Square root
 sqrt(16)
 #Logarithm (base: Euler's number e)
 log(1)
-#Logarithm (base: 10)
-log10(10)
 #Exponential function
 exp(1)
 
 #Let R talk
 print("Hello world")
 
+#Install RStudio (from Posit):
+#https://rstudio.com/
 
-#Pro Tip:
-#Run code via the shortcut:
-#Press <Ctlr/Cmd> + <Enter>
+knitr::include_graphics('images/Fig22.png')
+
+#Run code via the shortcut (Windows/Mac):
+#Press: <Ctlr/Cmd> + <Enter>
+
+knitr::include_graphics('images/Fig23.png')
 
 #Do not forget the quotation marks ("" or '') to print a string
 print(Hello)
 
-#getwd() returns the current working directory
-getwd()
+## #The getwd() function returns the current working directory
+## getwd()
 
+knitr::include_graphics('images/Fig24.png')
 
 ## #Windows
 ## setwd("C:/Users/edgar/R/Scripts")
@@ -41,40 +87,101 @@ getwd()
 ## setwd("~/R/Scripts/")
 
 ## #Copy and run the following code to generate a bar plot!
-barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
+## barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
 
+knitr::include_graphics('images/Fig25.png')
 
-## #Ask for help
-?barplot
-## #Search for keywords within the help files
-#help.search("keywords")
+## #Install a package with install.packages("name")
+## #Caution: The package name needs to be enclosed in quotation marks!
+## install.packages("palmerpenguins")
+## install.packages("tidyverse")
+## #>Try URL 'https://cran.rstudio.com/bin/4.0/palmerpenguins_0.1.0.tgz'
+## #>Content type 'application/x-gzip' length 3001738 bytes (2.9 MB)
+## #>==================================================
+## #>downloaded 2.9 MB
+## 
+## #>The downloaded binary packages are in
+## #>	/var/folders/0v/T//Rtmp4z29rO/downloaded_packages
 ## 
 
-#The object results refers to 5*5
-results <- 5*5
-results
+#Remember: Package need to be installed only once.
+#But: Load a package each time you start a new R session!
+library(palmerpenguins)
+
+## #The devtools package let you install packages from GitHub
+## install.packages("devtools")
+
+## #Install the PracticeR package
+## devtools::install_GitHub("edgar-treischl/PracticeR")
+## 
+
+knitr::include_graphics('images/Fig26.png')
+
+## #Load a chapter script with show_script()
+## library(PracticeR)
+## show_script("chapter02")
+
+#Show_link opens a browser with the link
+show_link("pr_website", browse = FALSE)
+
+## #Ask for help
+## ?barplot
+## #Search for keywords within the help files
+## help.search("keywords")
+## 
+
+## # 2.2 Base R ###################################################################
+
+#The object result refers to 5*5
+result <- 5*5
+result
 
 #R does not print the results of the assignment
-(results <- "Hello!")
+(result <- "Hello from the other side!")
 
 
-## #Everything is an object, for example, the bar plot from the beginning:
-#my_plot <- barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
+## #Everything is an object, for example, a bar plot:
+## my_plot <- barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
 ## 
 
 #ABC of the assignment operator
 a <- 5
 b <- 6
-c <- a + b
-c
+
+#The result
+result <- a + b
+result
+
+#Compare objects:
+#Is a greater (>) than (or equal to) b
+a >= b
+
+#Is a less (<) than (or equal to) b
+a <= b
+
+#Is a equal to (==) b
+a == b
+
+#Is a not equal to (!=) b
+a != b
 
 # Assign like a Pro, press: 
 # <Alt> + <-> (Windows)
 # <Option> + <-> (Unix/Mac)
-# The assignment operator will appear out of nothing.
+# The assignment operator will appear out of nothing
 
-# R Studio suggests also the input of a function 
+#Keep in mind: No numbers
+make.names(names="1.wave")
+
+#No special characters
+make.names(names="income_$")
+
+#Try to be specific and provide a descriptive name
+make.names(names="an_object_should_describe_its_content")
+
+# RStudio suggests also the input of a function (e.g. object name)
 # Give it a try and press <TAB> within the brackets of a function
+print("Hello", quote = FALSE)
 
 #Combine function
 running_number <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -86,88 +193,60 @@ running_number
 
 #The sequence function
 seq(1:10)
+
+#The by option
 seq(0, 10, by=2)
 
-df <- data.frame(
-  id = seq(1:4),
-  group = c(
-    "red", "red",
-    "blue", "blue"
-  ),
-  group_number = rep(1:2, each = 2)
-)
-
-df
-
-#The repetition function
-rep(1:2, each=5)
+#Repeat five times
 rep(1:2, times=5)
 
-#Function
+#Repeat each element five times
+rep(1:2, each=5)
 
-## function(x){
-## #  build the sum of x and divided by n
+## #The basic structure of a non-functioning function:
+## 
+## my_fun <- function(x){
+## #  build the sum of x, divided by n
 ##   }
 
-#1. Save the input
-x <- c(3, 2, 1, 5, 8, 12, 1)
+#1. The input
+data <- c(3, 2, 1, 5, 8, 12, 1)
 
-#2. Generate and save function
+#2. Create a function
 return_function<- function(x){
   return(x)
 }
-#3. Call and feed the function with the input
-return_function(x)
+#3. Call and feed the function
+return_function(data)
 
 
-#The sum function:
-sum(c(3,2,1))
-#The length function:
-length(c(3,2,1))
+#Build the sum
+sum(c(1,2,3))
+
+#Count the length
+length(c(1,2,3))
 
 
-#The mean function
+#The mean_function
 mean_function <- function(data){
   mean <- sum(data)/length(data) #save and create mean
   return(mean)
 }
 
-data <- c(3, 2, 1, 5, 8, 12, 1)
 mean_function(data)
 
-#The "real" mean function
-round(mean(c(3, 2, 1, 5, 8, 12, 1)), 
-      digits = 2)
+#The "real" mean
+round(mean(data), digits = 2)
 
+## # 2.3 Data types and structures# ###############################################
 
-#Load the packages
-#take a glimpse at your data!
-glimpse(penguins)
-
-## str(penguins)
-
-#head shows the first 6 rows of the data as default
-head(penguins)
-
-head(penguins$species)
-
-#last n elements
-tail(penguins$species, n = 3)
-
-## #View the entire data set
-## tibble::view(penguins)
-
-#Create some vectors
+#Create two vectors of identical length
 x<- c(1, 2, 3, 4)
 y<- c("a", "a", "a", "a")
 
-#Combine vectors with the data.frame function
+#Combine them as data.frame
 df <- data.frame(x, y)
 df
-
-#is_tibble checks if an object is a tibble
-library(tidyr)
-is_tibble(penguins)
 
 #Create a tibble
 library(tidyr)
@@ -182,36 +261,40 @@ tribble(
   "Women", 22.7, "1981-01-06"
 )
 
-#Recycling vectors
-data.frame(a = 1:6, b = 1:2, c = 1)
+#Rgh, R recycles vectors
+data.frame(a = 1:6, b = 1:3, c = 1:2)
 
 #Tibbles do not recycle vectors, unless ...
-tibble(a = 1:6, b = 1:2, c = 1)
+tibble(a = 1:6, b = 1:3, c = 1:2)
 
-#lists combine heterogeneous output in one object
+#A list may combine heterogeneous input
 my_list <- list("numbers" = 1:10, 
-              "letters" = LETTERS[1:3], 
-              "names" = c("John", "Paul", "George", "Ringo") )
+                "letters" = LETTERS[1:3], 
+                "names" = c("Bruno", "Justin", "Miley", "Ariana") )
 my_list
 
-df <- data.frame(names = c("Bruno", "Justin", "Miley", "Ariana"),
-                 x = seq(1:4), 
-                 sex = rep(c("male", "female"), each = 2))
-df
+#Example data
+df <- tibble::tribble(
+  ~names, ~birthyear, ~sex,
+  "Bruno", 1985, "male",
+  "Justin", 1994, "male",
+  "Miley", 1992, "female",
+  "Ariana", 1993, "female"
+)
 
-#So, how do we slice a vector?
-#First, we may create a vector with $
-x <- df$names
-x
+#So, how do we slice x?
+x <- c("Bruno", "Justin", "Miley", "Ariana")
 
+#The first element
+x[1]
 #The third element
 x[3]
-#The same works with $
-df$names[3]
-#All elements except the third element
+#All elements except the third
 x[-3]
 #From the second to the third element
 x[2:3]
+#Get (slice) a column vector with $
+df$names
 
 #The first row
 df[1, ]
@@ -226,29 +309,34 @@ df[1:2, ]
 #All elements except the first row
 df[-1, ]
 
-#my_list[1] returns the first element (list)
-#the first element of a list is not a vector!
+#Consider what my_list contains
+my_list
+
+#my_list[1] returns the first element (list), not the vector!
 my_list[1]
 
 
 #Returns the values of the first list
 my_list[[1]]
 
-#First three element of the first list
+#First three elements of the first list
 my_list[[1]][1:3]
 
-#You must take the nested structure of a list into account
+#You need to take the nested structure of a list into account
 my_list[1][1:3]
 
-gentoo_df <- penguins[penguins$species == "Adelie", 1:4]
-gentoo_df
-nrow(gentoo_df)
+#Slice/subset of the data
+adelie_df <- penguins[penguins$species == "Adelie", ]
 
-ncol(gentoo_df)
+#Number of rows
+nrow(adelie_df)
 
-gentoo_df <- subset(penguins, species == "Adelie")
+#Number of columns
+ncol(adelie_df)
 
+## #The dplyr::filter function
+## library(dplyr)
+## adelie_df <- filter(penguins, species == "Adelie")
+## 
 
-library(dplyr)
-filter(penguins, species == "Gentoo")
-
+Sys.time()

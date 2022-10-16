@@ -1,224 +1,333 @@
-#Practice R Chapter 3
+library(ggplot2)
 
-#the library and data######
-#install packages via: install.packages("name")
-#Install and load further packages to explore data
-library(tidyverse)
+
+ggplot2::theme_set(ggplot2::theme_minimal()) # sets a default ggplot theme
+#gssm2016 <- readRDS(file = "gssm2018.rds")
+
+
+options(tibble.print_max = 25, tibble.print_min = 5)
+
+#fig.width = 6
+knitr::opts_chunk$set(
+  fig.height = 3.5, fig.path = "images/", cache = TRUE,
+  echo = TRUE, warning = FALSE, message = FALSE, eval = TRUE, out.width='90%'
+)
+
+knitr::opts_chunk$set(
+  fig.process = function(filename) {
+    new_filename <- stringr::str_remove(string = filename,
+                                        pattern = "-1")
+    fs::file_move(path = filename, new_path = new_filename)
+    ifelse(fs::file_exists(new_filename), new_filename, filename)
+  }
+)
+
+
+source("utils.R")
+Sys.setenv(LANG = "en")
+
+knitr::opts_chunk$set(tidy = "styler")
+
+
+#Setup of Chapter 3 #####
+#Remember you can install packages via: install.packages("name")
 library(correlation)
 library(corrplot)
 library(GGally)
 library(summarytools)
 library(DataExplorer)
 library(PracticeR)
-library(socviz)
-library(forcats)
-library(effectsize)
-library(socviz)
-gssm2018 <- socviz::gss_sm
+library(dplyr)
 
+df <- PracticeR::gssm2016 |> 
+  dplyr::select(age, sex, happy, income16, race)
 
+df$income <-  as.numeric(df$income16)
 
-#The first 10 observations of sex
-gssm2018$sex[1:10]
+df <- df |> dplyr::select(age, sex, happy, income, race)
 
-fct_count(gssm2018$sex)
+# df$happy <- forcats::fct_collapse(gssm2016$happy, 
+#                                Happy = c("Very Happy", "Pretty Happy"))
 
-#a simple table
-table(gssm2018$sex)
-#a simple cross table
-table(gssm2018$sex, gssm2018$happy)
+df$happy <- stringr::str_replace_all(df$happy , "Not Too Happy", "Not happy")
+
+df$happy <- as.factor(df$happy)
+
+## #Take a glimpse at your data frame!
+## df <- PracticeR::gssm5
+## glimpse(df)
+
+#Use $ for column vectors
+str(df$sex)
+
+#head shows the first 6 rows of the data as default
+head(df)
+
+#Last n elements
+tail(df, n = 3)
+
+## #View the entire data set
+## tibble::view(gssm5)
+
+## # 3.1 Categorical variables ####################################################
+
+#The first five observations of sex
+df$sex[1:5]
+
+#A simple table
+table(df$sex)
 
 #A frequency table
-freq(gssm2018$sex)
+library(summarytools)
+freq(df$sex)
 
-#smoker_count <- table(tobacco$smoker)
-count_sex <- fct_count(gssm2018$sex)
+## #Count sex
+## count_sex <- table(df$sex)
+## #Left plot
+## barplot(count_sex)
+## 
+## #Right plot
+## #The bar plot with title and label adjustments
+## barplot(count_sex,
+##         main="Sex",
+##         ylab="Count")
+
+count_sex <- table(df$sex)
 
 
-barplot(n ~ f, data = count_sex)
-
-barplot(n ~ f, data = count_sex,
+par(mfrow=c(1,2))
+barplot(count_sex)
+barplot(count_sex,
         main="Sex",
-        xlab="Participants",
         ylab="Count") 
 
+## pacman()
 
+## fruits_pie()
 
-## library(DataExplorer)
+#Plot several bar graphs
+library(DataExplorer)
+plot_bar(df)
 
-plot_bar(gssm2018[7:9])
+## library(ggplot2)
+## library(ggblanket)
+## 
+## #Left plot
+## gg_bar(df, x = sex)
+## 
+## #Right plot
+## gg_histogram(df, x = age)
 
-#class returns the class of an object
-class(gssm2018$sex)
+## #DEL#############
+## library(ggplot2)
+## library(ggblanket)
+## library(patchwork)
+## 
+## p1 <- df|>
+##   gg_bar(
+##     x = sex
+##   )
+## 
+## p2 <- df|>
+##   gg_histogram(
+##     x = age
+##   )
+## 
+## p1 + p2
+## 
+## #What does ggblanket return?
+## my_plot <- gg_bar(df, x = sex)
+## class(my_plot)
 
-#levels returns the levels of a factor variable
-levels(gssm2018$sex)
+#Levels returns the levels of a factor variable
+levels(df$sex)
 
-#typeof returns the R storage mode
-typeof(gssm2018$sex)
+#Typeof returns the R storage mode
+typeof(df$sex)
 
-#how to create a factor variable
+#Create an example factor variable
 fruit <- factor(c("pear", "apple", "apple", "cherry", "apple"))
 fruit
 
-#show me (unique) levels of the factor variable
-levels(fruit)
-
-#how to create a simple rating variable
+#Create a rating variable
 rating <- factor(c(rep("low", 10), 
                    rep("high", 2), 
                    rep("medium",7)
                    ))
-#inspect the order
+#Inspect the order
 levels(rating)
 
-#set the levels
+#Set the levels
 rating <- factor(rating, 
                  levels = c("low", "medium", "high"))
 
 levels(rating)
 
-levels(tobacco$gender)
+#A messy factor variable
+sex <- factor(c(rep("F", 10), 
+                rep("M",7)
+                   ))
+#A messy table
+table(sex)
 
-table(tobacco$gender)
+#Create or adjust the labels
+sex <- factor(sex, 
+              levels = c("F", "M"),
+              labels = c("female", "male"))
 
-#create or adjust the labels
-tobacco$gender <- factor(tobacco$gender, 
-                         levels = c("F", "M"),
-                         labels = c("female", "male"))
+table(sex)
 
-table(tobacco$gender)
+## # 3.2 Continuous variables #####################################################
 
-
-
-# Minima
+#Minima
 min(c(1, 5, 6, 8, 11))
-# Median
+#Median
 median(c(1, 5, 6, 8, 11)) 
-# Maxima
+#Maxima
 max(c(1, 5, 6, 8, 11))
-# Standard deviation
-sd(c(3, 5, 6, 8, 11))
+#Standard deviation
+sd(c(1, 5, 6, 8, 11))
 
-mean(gssm2018$age)
+#Mean age
+mean(df$age)
 
+#Missing values
 min(3, 5, 6, 8, NA)
 
-#na.rm removes missing values (NA)
-mean(gssm2018$age, na.rm = TRUE)
+#The na.rm argument removes missing values
+mean(df$age, na.rm = TRUE)
 
-#summary statistics for one variable
-summary(gssm2018$age)
+#Summary statistics of one variable
+summary(gssm5$age)
 
-#summary statistics for the entire data
-summary(gssm2018)
+#Summary statistics of the first four variables
+summary(df[1:4])
 
-
-#fine-grained via quantile
-quantile(gssm2018$age, 
-         na.rm = TRUE,
-         probs = seq(from = 0, to = 1, by = 0.2))
-
-#descr() returns descriptive summary statistics
-
-descr(gssm2018, 
+#The descr() function returns descriptive summary statistics
+library(summarytools)
+descr(gssm2016, 
       stats = c("min", "mean", "sd", "max"),
       transpose = TRUE)
 
-#A histogram
-hist(gssm2018$age) 
+## #Left plot
+## hist(df$age)
+## 
+## #Right plot
+## hist(df$age,
+##      breaks = 6,
+##      freq=FALSE,
+##      main="Density",
+##      xlab = "Age",)
 
-hist(gssm2018$age, 
-     main="Density",
-     xlab = "Age",
+par(mfrow=c(1,2))
+hist(df$age) 
+hist(df$age, 
      breaks = 6,
-     freq=FALSE) 
+     freq=FALSE,
+     main="Density",
+     xlab = "Age",) 
 
 
-plot_histogram(gssm2018)
+#Plot several histograms
+DataExplorer::plot_histogram(df)
 
+## boxplot_illustration()
 
+knitr::include_graphics('images/Fig307.pdf')
 
-fct_count(gssm2018$income16)
-levels_income16 <- fct_unique(gssm2018$income16)
-length(levels_income16)
-
+#Toy variable
 x <-  factor(c("Female", "Male"))
 y <- c(3.11, 2.7)
 
 as.numeric(x)
 as.character(y)
 
+## #Income as numeric
+## df$income <- as.numeric(gssm2016$income16)
+## 
+## #Left plot
+## boxplot(df$income,
+##         horizontal = TRUE)
+## 
+## #Right plot
+## boxplot(income~sex,
+##         data=df)
+## 
 
-gssm2018$income <- as.numeric(gssm2018$income16)
+par(mfrow=c(1,2))
+boxplot(df$income,
+        horizontal = TRUE) 
+boxplot(income~sex, 
+        data=df) 
 
-
-## boxplot
-boxplot(gssm2018$income) 
-
-boxplot(income~sex, data=gssm2018, 
-        main="BMI by Sex",
-        xlab="Sex", 
-        ylab="BMI",
-        horizontal = FALSE) 
-
+## #Create a data report
 ## library(DataExplorer)
-## #create_report create a report for a data set
-## create_report(penguins,
+## create_report(data,
 ##               output_file = "my_report.pdf",
 ##               output_format = "pdf_document")
 
-fct_count(gssm2018$happy)
+## # 3.3 Explore effects ##########################################################
 
-gssm2018$happy <- fct_collapse(gssm2018$happy, Happy = c("Very Happy", "Pretty Happy"))
-fct_count(gssm2018$happy)
+levels(df$happy)
 
-#a simple table
-table(gssm2018$sex, gssm2018$happy)
+#Collapse level of a factor variable with fct_collapse
+df$happy <- forcats::fct_collapse(df$happy, 
+                               Happy = c("Pretty Happy", "Very Happy"))
+levels(df$happy)
+
+#A simple table
+table(df$sex, df$happy)
 
 #A cross table
-ctable(x = gssm2018$sex, 
-       y = gssm2018$happy,
-       prop = "r")
+summarytools::ctable(x = df$sex, 
+                     y = df$happy,
+                     prop = "r")
 
-ctable(x = tobacco$smoker, 
-       y = tobacco$diseased,
-       prop = "c")
-
-
-#mosaicplot
-spineplot(diseased ~ smoker,
-           data = tobacco)
+#Boxes are proportional to the number of observations
+spineplot(happy ~ sex, 
+          data = df)
 
 
-#create a scatter plot
-plot(y = gssm2018$income, x = gssm2018$age)
-#and a regression line
-abline(lm(income ~ age, data = gssm2018), 
+#Create a scatter plot
+plot(y = df$income, x = df$age,
+     pch = 20, frame = FALSE)
+#And a regression line
+abline(lm(income ~ age, data = df), 
        col = "red")
 
 
-#by default, R returns Pearson's r if you use the `cor()` function
-cor_value <- cor(gssm2018$income, gssm2018$age, use = "complete")
+#By default, R returns Pearson's r if you use the `cor()` function
+cor_value <- cor(df$income, df$age, use = "complete")
 cor_value
 
-#the effect size package helps you to interpret r and other indices
+#The effect size package interprets r
+library(effectsize)
 interpret_r(cor_value, rules = "cohen1988")
 
-
-
-#the correlation function from the correlation package
-results <- correlation(mtcars[1:3])
+#The correlation function from the correlation package
+library(correlation)
+results <- correlation(mtcars[1:5])
 results
 
+## #A correlation plot example
+## library(corrplot)
+## corr_matrix <- cor(mtcars)
+## 
+## #Left plot
+## corrplot(corr_matrix)
+## 
+## 
+## #Right plot
+## #Estimate p-values
+## p_values <- cor.mtest(mtcars, conf.level = 0.95)
+## #Corrplot
+## corrplot(corr_matrix,
+##          p.mat = p_values$p,
+##          order = 'AOE',
+##          type = 'lower',
+##          diag=FALSE,
+##          addCoef.col ='black', number.cex = 0.8, tl.col = 'black')
 
-#A correlation plot example
-corr_matrix <- cor(mtcars)
+knitr::include_graphics('images/Fig312.pdf')
 
-corrplot(corr_matrix, 
-         method = 'color', 
-         order = 'AOE',
-         type = 'lower',
-         tl.col = 'black')
-
-
+Sys.time()

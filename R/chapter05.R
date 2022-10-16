@@ -1,45 +1,80 @@
+library(ggplot2)
+#library(cowplot)
+#library(gapminder)
+library(patchwork)
+source("utils.R")
+Sys.setenv(LANG = "en")
 
-#The Setup
-library(tidyverse)
+#gapminder <- as.data.frame(gapminder::gapminder)
+
+#df_gp <- gapminder |>
+  #filter(continent == "Europe")
+
+theme_set(theme_minimal()) # sets a default ggplot theme
+
+options(tibble.print_max = 25, tibble.print_min = 5)
+
+knitr::opts_chunk$set(
+  fig.width = 6, fig.height = 3, fig.path = "images/", cache = TRUE,
+  echo = TRUE, warning = FALSE, message = FALSE, eval = TRUE
+)
+
+knitr::opts_chunk$set(
+  fig.process = function(filename) {
+    new_filename <- stringr::str_remove(
+      string = filename,
+      pattern = "-1"
+    )
+    fs::file_move(path = filename, new_path = new_filename)
+    ifelse(fs::file_exists(new_filename), new_filename, filename)
+  }
+)
+
+#knitr::opts_chunk$set(tidy = "styler")
+
+#The setup of Chapter 5 #####
+library(dplyr)
 library(janitor)
 library(naniar)
 library(forcats)
-library(haven)
+library(tibble)
+library(readr)
+library(tidyr)
 
-## #the readr package reads txt/csv files
+
+## # 5.1 Data import and export ####################################################
+
+## #The readr package reads txt/csv files
 ## library(readr)
-## #import a csv file
+## #Import a csv file
 ## my_data <- read_csv("path_to_the_file/data.csv")
 
-## #The haven package reads stata files
-## library(haven)
-## dataset <- read_stata("my_stata.dta")
+## #The haven package reads SPSS/Stata files
+## haven::read_stata("my_stata.dta")
 
+knitr::include_graphics('images/Fig501.png')
 
-
-## #Copy code to import data from the code preview
+## #Copy the code to import data from the code preview
 ## overweight_world <- read_csv("~/data/overweight_world.csv")
 ## View(overweight_world)
 
 ## #Export data
 ## write_csv(my_new_data, "my_new_data.csv")
 
+#A messy variable
+x <- c("9", 9, 9, 2, 3, 1, 2)
+class(x)
 
-
-#A messy tibble
-df <- tibble(x = c("9", 9, 9, 2, 3, 1, 2))
-class(df$x)
-
-#The as.*() functions convert input, here into an numeric vector
-df$x <- as.numeric(df$x)
-class(df$x)
+#The as.*() functions convert input, here into a numeric vector
+x <- as.numeric(x)
+class(x)
 
 #A real example, what a mess!
-#overweight_world <- read_csv("data/overweight_world.csv")
-#head(overweight_world)
+overweight_world <- read_csv("data/overweight_world.csv")
+head(overweight_world)
 
 #Inspect the column specification
-#spec(overweight_world)
+spec(overweight_world)
 
 #Guess_parser reveals the parser to encode data
 guess_parser(c("Hello world"))
@@ -60,60 +95,67 @@ guess_parser(c("TRUE", "FALSE"))
 ## data.frame(
 ##   measurement 1 = 1,
 ##   2016 = 1)
+## 
 ## #> Error: unexpected numeric constant in:
 ## #> "data.frame(
 ## #>  measurement 1"
 ## #> Error: unexpected ')' in "  2016 = 2)"
 
-#Insert back ticks
+#Insert backticks
 data.frame(
   `measurement 1` = 1, 
   `2016` = 1
 )
 
-#Tibble let us break name conventions
+#Tibble lets us break name conventions
 tibble(
   `measurement 1` = 1, 
   `2016` = 2
 )
 
 #Is x a tibble?
-#is_tibble(overweight_world)
+tibble::is_tibble(overweight_world)
+
+iris <- as_tibble(iris)
 
 #The iris data
-head(iris)
-df <- as_tibble(iris)
-
-
+names(iris)
 
 ## #snake_case
 ## my_var <- 1
+## 
 ## #SCREAMING_SNAKE_CASE
 ## MY_VAR <- 1
+## 
 ## #camelCase
 ## myVar <- 1
+## 
 ## #Upper_Camel
 ## MyVar <- 1
-## #kebab-case hmm-mmmm
+## 
+## #kebab-case (hmm-mmmm)
 ## my-var <- 1
 
-## #rename variable: new_name = variable
+## #Rename variable: new_name = variable
 ## dplyr::rename(df, sepal_length = Sepal.Length)
 
-#include rename in select
-df %>% 
+#Include rename() in select
+iris |> 
   select(
     new_var = Sepal.Length
     )
 
 #The janitor package cleans data 
-iris %>% 
-  janitor::clean_names()%>%
-  head()
+iris |> 
+  janitor::clean_names()
 
 #Another messy data set
-messy_data <- data.frame(firstName   = 1:2, Second_name  = 1:2, `income in €`  = 1:2,
-                         `2009`      = 1:2, measurement = 1:2, measurement = 1:2)
+messy_data <- data.frame(firstName   = 1:2, 
+                         Second_name  = 1:2, 
+                         `income in €`  = 1:2,
+                         `2009`      = 1:2, 
+                         measurement = 1:2, 
+                         measurement = 1:2)
 names(messy_data)
 
 #Tibble checks duplicates and warns us
@@ -121,32 +163,45 @@ tibble(measurement = 1:2,
        measurement = 1:2)
 
 #Janitor gets rid of many crude names
-names(messy_data %>% janitor::clean_names())
+names(messy_data |> janitor::clean_names())
 
-#NA in summary functions
-df <- tibble(satisfaction = c(1, 2, NA, 3, 4, 5, 99))
-mean(df$satisfaction)
+## # 5.2 Missing data #############################################################
+
+#NAs in summary functions
+x <- c(1, 2, NA, 4, 5, 99)
+mean(x)
 
 #is.na checks if value is NA
-is.na(df$satisfaction)
+is.na(x)
 
 #na.rm removes NA
-mean(df$satisfaction, na.rm = TRUE) 
+mean(x, na.rm = TRUE) 
 
-#shalle we include na.rm?
-df$satisfaction[df$satisfaction == 99] <- NA
-mean(df$satisfaction, na.rm=TRUE)
+#Shall we include na.rm?
+x[x == 99] <- NA
+mean(x, na.rm=TRUE)
 
+rubin_simdata <- rubin_df()
+rubin_simdata <- rubin_simdata |> 
+  select(income:education)
 
+## #The next console shows the `head()` of the simulated data.
+## #Summary of the simulated data
+## head(rubin_simdata)
+
+## rubin_missing()
+
+knitr::include_graphics('images/Fig502.pdf')
 
 #Tiny data with NAs
-df <- tibble(person = 1:5,
-             country   = c(rep("US", times = 5)),
-             age   = c(NA, 33, 999, 27, 51),
-             children = c(NA, rep(1, times = 3), NA),
-             age_child2   = c(rep(NA, times = 5)),
-             sex = c("Male", "NA", "Female", "Male", NA))
-df
+df <- tribble(
+  ~person, ~country, ~age, ~children, ~age_child2,     ~sex,
+       1L,     "US",   NA,        NA,          NA,   "Male",
+       2L,     "US",   33,         1,          NA,     "NA",
+       3L,     "US",  999,         1,          NA, "Female",
+       4L,     "US",   27,         1,          NA,   "Male",
+       5L,     "US",   51,        NA,          NA,       NA
+  )
 
 #How many missing value has the variable sex?
 sum(is.na(df$sex))
@@ -166,26 +221,21 @@ n_complete(df)
 #How many missings has the data?
 vis_miss(df)
 
-#inspect the data frame one more time
+#Inspect the data frame one more time
 df
 
-#select all variables, except x with a - sign
-df %>% 
+#Select all variables, except x with a minus (-) sign
+df |> 
   select(-age_child2)
 
 #coalesce replaces NAs
 children <- c(1, 4, NA, 2, NA)
 coalesce(children, 0)
 
+#Drop (all) NAs
 library(tidyr)
-#Drop NAs
-df %>% 
-  select(-c(age_child2, country)) %>% 
-  drop_na(sex)
-
-#Drop all NAs
-df %>% 
-  select(-c(age_child2, country)) %>% 
+df |> 
+  select(-c(age_child2, country)) |> 
   drop_na()
 
 #na_if takes care of alternative missing values
@@ -193,26 +243,30 @@ x <- c(1, 999, 5, 7, 999)
 na_if(x, 999)
 
 #Replace values
-df <- df %>% 
-  select(-c(age_child2, country)) %>% 
+df <- df |> 
+  select(-c(age_child2, country)) |> 
   mutate(age = replace(age, age == "999", NA),
          sex = replace(sex, sex == "NA", NA))
 df
 
 #Replace NAs
-df %>% replace_na(list(sex = "Not available"))
+df |> replace_na(list(sex = "Not available"))
 
 #Replace NAs with if_else
-df %>% replace_na(list(sex = "Not available"))%>%
+df |> replace_na(list(sex = "Not available"))|>
   mutate(age_missing = if_else(is.na(age), "Missing", "Not-missing") )
 
+## geom_miss_fun()
 
+knitr::include_graphics('images/Fig510.pdf')
 
+## # 5.3 Categorical variables ####################################################
+
+head(gss_cat)
 
 #forcats == for categorical variables
 library(forcats)
 #Count levels
-class(gss_cat$marital)
 fct_count(gss_cat$marital)
 
 #Relevel manually
@@ -250,9 +304,11 @@ fct_count(f)
 
 #Sort in frequency
 f <- fct_infreq(gss_cat$relig)
-fct_count(f)%>% head(n = 10)
+fct_count(f)|> head(n = 10)
 
 #Lump together
 f <- fct_lump(gss_cat$relig, n = 5) 
 f <- fct_infreq(f)
 fct_count(f)
+
+Sys.time()

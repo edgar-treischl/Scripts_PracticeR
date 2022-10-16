@@ -1,345 +1,440 @@
-#Practice R
-#The Setup for Chapter 4########
+#library(ggplot2)
+#library(datapasta)
+#library(tidyr)
+
+
+#library(gapminder)
+#library(magrittr)
+#library(dplyr)
+#library(palmerpenguins)
+
+#library(knitr)
+#library(prettydoc)
+#library(cowplot)
+#library(readr)
+
+#gapminder <- as.data.frame(gapminder::gapminder)
+
+#df_gp <- gapminder |>
+  #filter(continent == "Europe")
+ggplot2::theme_set(ggplot2::theme_minimal()) # sets a default ggplot theme
+
+source("utils.R")
+Sys.setenv(LANG = "en")
+
+
+options(tibble.print_max = 10, tibble.print_min = 6)
+
+options(max.print = 1000000)
+
+knitr::opts_chunk$set(
+  fig.width = 6, fig.height = 4, fig.path = "images/", cache = TRUE,
+  echo = TRUE, warning = FALSE, message = FALSE, eval = TRUE
+)
+
+knitr::opts_chunk$set(
+  fig.process = function(filename) {
+    new_filename <- stringr::str_remove(
+      string = filename,
+      pattern = "-1"
+    )
+    fs::file_move(path = filename, new_path = new_filename)
+    ifelse(fs::file_exists(new_filename), new_filename, filename)
+  }
+)
+
+knitr::opts_chunk$set(tidy = "styler")
+#english environment
+Sys.setenv(LANG = "en")
+
+
+#Chapter 4 needs the following packages #####
 library(dplyr)
+library(tidyverse)
 library(magrittr)
 library(tidyr)
 library(tibble)
 library(socviz)
+library(PracticeR)
 
+## # 4.1 The five key functions of dplyr ##########################################
 
-#The Data
-str(mtcars)
+## five_dplyr()
 
-#use one or more conditions to filter your data
-filter(mtcars, hp > 100) %>% head() 
+knitr::include_graphics('images/Fig41.pdf')
 
-#Compare objects:
-a <- 5
-b <- 6
-#R returns a boolean expression (TRUE/FALSE/NA)
-#Is a greater than (or equal to) b
-a >  b
-a >= b
-#Is a less than (or equal to) b
-a <  b
-a <= b
-#Is a exactly equal to b
-a == b
-#Is a not equal to b
-a != b
+mtcars_df <- mtcars
+#The mtcars data set
+mtcars <- tibble::as_tibble(mtcars)
+head(mtcars)
 
+#Use one or more conditions to filter your data
+filter(mtcars, hp > 100)
 
-#arrange your data in an ascending order 
-arrange (mtcars, hp) %>% 
-  head()
+#Filter with logical and relational operators
+#Toy peanuts data
+peanuts <- tibble::tribble(
+  ~names, ~height_cm, ~sex, ~married,
+  "Charlie", 181, "male", 0,
+  "Sally", 176, "female", 1,
+  "Schroeder", 180, "male", 1,
+  "Peppermint Patty", 175, "female", 0
+)
 
-#arrange your data in a descending order 
-arrange (mtcars, desc(hp)) %>% 
-  head()
+#Equal to ==
+peanuts |> filter(sex == "female")
 
-#select variables by name
-select(mtcars, mpg, hp) %>% 
-  head()
+#Not equal to: Negation (!=)
+#peanuts |> filter(sex != "female")
 
-#select variable by providing a start and an endpoint
-select(mtcars, mpg:hp) %>% 
-  head()
+#AND & (for scalars &&)
+peanuts |> filter(sex == "female" & married == 1)
 
-#reverse your selection
-select(mtcars, -(mpg:hp)) %>% 
-  head()
+#OR | (for scalars ||)
+peanuts |> filter(sex == "female" | married == 1)
 
-#select returns always a data frame
+#Greater than >
+peanuts |> filter(sex == "male" & height_cm > 180)
+
+#Or greater than or equal to >=
+#peanuts |> filter(sex == "male" & height_cm >= 180)
+
+#Less than <
+peanuts |> filter(sex == "male" & height_cm < 181)
+
+#Or less than or equal to <=
+#peanuts |> filter(sex == "male" & height_cm <= 181)
+
+#Arrange the data in an ascending order 
+arrange(mtcars, hp)
+
+#Arrange the data in a descending order 
+arrange(mtcars, desc(hp))
+
+#Select mpg and hp
+select(mtcars, mpg, hp)
+
+#Select variable by providing a start and an endpoint
+select(mtcars, mpg:hp)
+
+#Reverse the selection
+select(mtcars, -(mpg:hp))
+
+#Select returns a data frame
 hp <- select(mtcars, hp) 
-class(hp)
+is.data.frame(hp)
 
-#use pull to extract a variable/column vector
-hp <- pull(mtcars, hp) 
-class(hp)
+#Use pull to extract a variable/column vector
+hp <- pull(mtcars, hp)
+is.vector(hp)
 
-#to see what happens, we need a subset of the data set first
+#Create a small(er) subset
 df <- select(mtcars, hp) 
 head(df)
 
-#use mutate to create new variables
-conversion <- 0.74570
-reconversion <- 1.34102
-
+#Mutate and create new variables
 mutate(df, 
-       kw = hp * conversion,
-       hp_new = round(kw * reconversion, 2)) %>% 
-      head()
+       kw = hp * 0.74570,
+       hp_new = round(kw * 1.34102, 2))
 
-#transmute keeps only new (or listed) variables
+#Transmute keeps only new (or listed) variables
+conversion <- 0.74570
+
 transmute(mtcars,
           hp,
-          kw = hp * conversion) %>% 
-  head()
+          kw = hp * conversion)
 
-mtcars %>% 
-  summarise(mean_hp = mean(hp))
+#Summarize variables
+mtcars |> 
+  summarize(mean_hp = mean(hp))
 
+#Group by variables
 compare_group <- group_by(mtcars, am)
-compare_group
 
-summarise(compare_group, hp_mean = mean(hp))
+#And summarize for the groups
+summarize(compare_group, hp_mean = mean(hp))
 
+#Use the pipe operator to combine steps
 mtcars |> 
   group_by(am) |>
-  summarise(
+  summarize(
     mean_hp = mean(hp)
   )
 
-head(mtcars) 
+## # 4.2 Data manipulation with dplyr #############################################
 
-mtcars %>% 
-  rownames_to_column(var = "car") %>% 
+#The gssm2016 data
+library(PracticeR)
+head(gssm2016)
+
+## library(essurvey)
+## #Set your email address to get access
+## set_email("your@email.com")
+## 
+## #Import the eight round for Germany
+## germany <- import_country(
+##   country = "Germany",
+##   rounds = c(8)
+##   )
+## 
+## show_link("tidy_tuesday", browse = F )
+
+#First attempts ...
+gssm2016 |> 
+  mutate(age_mean = mean(age))|> 
   head()
 
-mtcars %>% 
-  select(mpg)%>% 
-  arrange(mpg)%>% 
-  mutate(running_number = 1:nrow(mtcars)
-         ) %>%
-  head()
-
-
-
-########GSS DATA###########
-head(gss_sm)
-
-
-gss_sm %>% 
-  mutate(age_mean = mean(age))%>% 
-  head()
-
-gss_sm %>% 
-  select(age, income_rc, partners, happy)%>% 
+#Select variables that are needed ...
+gssm2016 |> 
+  select(age, income_rc, partners, happy)|> 
   mutate(age_mean = mean(age)
-  )%>% 
+  )|> 
   head()
 
-missing_example <- data.frame(x = c(1, 3, 7, NA, 3, NA)) 
+#An example data
+missing_example <- data.frame(x = c(1, NA, 3, NA)) 
 
+#Drop_na drops NA
 tidyr::drop_na(missing_example, x)
 
-df <- gss_sm %>% 
-  select(age, income_rc, partners, happy) %>% 
-  drop_na() %>%
+df <- gssm2016 |> 
+  select(age, income_rc, partners, happy) |> 
+  drop_na() |>
   mutate(age_mean = mean(age)
   )
 
 head(df)
 
-df <- df %>% 
+#Relocate variables to get a better overview
+df |> 
   relocate(age_mean, .after = age) 
   
-head(df)
 
+#Instead of selecting variables, create a variable list 
 varlist <- c("income_rc", "partners", "happy", "age")
 
-gss_sm %>% 
-  select(varlist) %>% 
-  drop_na() %>% 
+#Include relocate in the mutate step
+df |> 
+  select(varlist) |> 
+  drop_na() |> 
   mutate(age_mean = round(mean(age), 2), .before = age
-  ) %>% 
-  head()
+  )
 
 
+#The chocolate bar stock
 chocolate <- 3
 
+#If else statement
 if(chocolate > 5){
   print("Don't panic, there is enough chocolate, you may not starve!")
 } else {
   print("Jeeez, go and get some chocolate!")
 }
 
+#Example data
 sex <- c("f", "m", "f")
 sex
 
-#base R
-ifelse(sex == "f", 0, 1)
-#dplyr 
+#The dplyr::if_else function
 if_else(sex == "f", 0, 1)
 
+#if_else with numerical input
 sex <- c(0, 1, 0)
 if_else(sex == 0, "female", "male")
 
-df %>% 
-  select(age, age_mean)%>% 
+df |> 
+  select(age, age_mean)|> 
   mutate(older = if_else(age > age_mean, "older", "younger"), 
-         .after = age_mean) %>% 
-  head()
+         .after = age_mean)
 
-df <- df %>% 
-  select(!age_mean) %>%
-  mutate(older = if_else(age > mean(age), TRUE, FALSE))
+#chain steps with gssm2016 data
+gssm2016 |> 
+  drop_na(age)|>
+  transmute(age, 
+            older = if_else(age > mean(age), TRUE, FALSE))
 
-head(df)
 
-df %>% 
+df |> 
   transmute(age,
-            age_cat = case_when(age <= 17  ~ "younger",
-                                   age >  65  ~ "older")
-         )%>% 
-  head()
+            older_younger = case_when(
+              age <= 17             ~ "younger",
+              age > 17  & age <= 64 ~ "in-between",
+              age >=  65            ~ "older"))
 
-df %>% 
+x <- data.frame(age = c(17, 77, 51, NA))
+
+x |> 
   transmute(age,
-            older_younger = case_when(age <= 17             ~ "younger",
-                                      age > 17  | age <= 64 ~ "in-between",
-                                      age >  65             ~ "older")
-  )%>% 
-  head()
+            older_younger = case_when(
+              age <= 17   ~ "younger",
+              age >=  65   ~ "older",
+              TRUE        ~ "in-between"))
 
-df %>% 
-  transmute(age,
-            older_younger = case_when(age <= 17   ~ "younger",
-                                      age >  65   ~ "older",
-                                      TRUE        ~ "in-between")
-  )%>% 
-  head()
-
-df %>% 
+df |> 
   mutate(age,
-        older_younger = case_when(age <= 17 & happy =="Pretty Happy"     ~ "young_happy",
-                                      age >  65 & happy =="Pretty Happy" ~ "old_happy",
-                                      TRUE                               ~ "others")
-  )%>% 
-  head()
+        older_younger = case_when(
+          age <= 17 & happy =="Pretty Happy" ~ "young_happy",
+          age >  65 & happy =="Pretty Happy" ~ "old_happy",
+          TRUE                               ~ "others"))
 
-df %>% 
-  mutate(age_range65 = between(age, 18, 65))%>% 
-  head()
+#Between selects observation between a certain range
+df |> 
+  mutate(age_filter = between(age, 18, 65))
 
-df %>% 
-  mutate(age_range65 = between(age, 18, 65))%>% 
-  filter(age_range65 == "TRUE") %>% 
-  head()
+#Restrict the analysis sample
+df |> 
+  mutate(age_filter = between(age, 18, 65))|> 
+  filter(age_filter == "TRUE")
 
+#Recode with ifelse
 male <- c("m", "f", "m")
 male <- ifelse(male == "m", "male", "female")
 male
 
-df <- data.frame(male = c("m", "f", "m", NA),
-                 male_num = c(1, 2, 1, NA)) 
-df 
+#Example df
+df <- tribble(
+  ~male, ~male_num,
+  "m", 1,
+  "f", 2,
+  "m", 1,
+   NA, NA,
+)
 
 
+#Recode (factor) variables
 recode_factor(df$male , m = "Men", f = "Women")
 recode(df$male_num , `1` = 1, `2` = 0)
 
-df %>% 
-  select(male)%>% 
+#Create new variables to check if any errors are introduced
+df |> 
+  select(male)|> 
   mutate(male_new = if_else(male == "f", "Women", "Men"))
 
-df <- data.frame(country = c("Germany", "UK", "Ituly")) 
+summarize(mtcars, mpg = mean(mpg),
+                  cyl = mean(cyl),
+                  disp = mean(disp))
 
-df %>% 
-  mutate(country = recode(country , Ituly = "Italy"))
+#Apply a mean across variables
+summarize(mtcars, across(mpg:disp, mean))
 
-summarise(mtcars, mpg= mean(mpg),
-                  cyl= mean(cyl),
-                  disp= mean(disp))
+#Give me everything (if possible)
+summarize(mtcars, across(everything(), mean))
 
-summarise(mtcars, across(mpg:disp, mean))
+## head(mtcars)
+#rownames
+head(mtcars_df)
 
-summarise(mtcars, across(everything(), mean))
+## #Augment your dplyr skills with further packages
+## mtcars |>
+##   tibble::rownames_to_column(var = "car") |>
+##   head()
 
+mtcars_df |> 
+  tibble::rownames_to_column(var = "car") |> 
+  head()
 
-#Workflow#################
+mtcars |> 
+  select(mpg)|> 
+  arrange(mpg)|> 
+  mutate(running_number = 1:nrow(mtcars)
+         ) |>
+  head()
+
+## # 4.3 Workflow #################################################################
 
 df <- tibble(
-  x1 = c(3.3, 3.5, 3, 4.4, 5),
+  x1 = c(3.3, 3.5, 3, 4.4, 5.4),
   x2 = c(3.1, 7.2, 8, 5.5, 4.3),
-  x3 = c(3, 3.1, 6, 6, 8),
-  x4 = c(8.4, 1.4, 2, 8.1, 9.0)
+  x3 = c(3.4, 3.1, 6, 6.2, 8.8)
 )
 
 mean(df$x1)
 
+#Column means
 colMeans(df)
 
+#Apply a function over a list or a vector
+lapply(df, mean)
+#Simplify the result, if possible
 sapply(df, mean)
 
-# Use the # sign to make comments!
+#Comments, comments comments!
+#Add useful comments that describe what the code does
 
-## ########################################################
-## # Pro Tip: Turn multiple lines into comments and back again:
-## # Ctrl/Cmd + Shift + C
-## ########################################################
-
-## #01 Packages####
-## library(tidyverse)
-## library(ggplot2)
+## #Pro tip
+## #Turn multiple lines into comments and back again:
+## #Press: Ctrl/Cmd + Shift + C
 
 ## #00 About ####
 ## #01 Packages ####
-## #02 Data Preparation ####
-## #03 Data Analysis ####
+## #02 Data preparation ####
+## #03 Data analysis ####
 ## #04 Visualization ####
 ## #05 Further ado ####
 
+knitr::include_graphics('images/Fig42.png')
 
+knitr::include_graphics('images/Fig43.png')
 
-#Version A: 
-df <- data.frame(
-  group = c("Treatment", "Control"),
-  outcome = c(3.6, 4.4)
-)
-
-#Version B: 
-df <- data.frame(
-  group = c("Treatment", "Control"), outcome = c(3.6, 4.4)
-)
+#https://style.tidyverse.org/
 
 #Version A: 
-df<-mtcars%>%group_by(am)%>%
-  summarise(
+df<-mtcars|>group_by(am)|>
+  summarize(
     median_hp = median(hp), count = n(), sd = sd(hp), min = min(hp)
   )
 
 #Version B:
 df <- 
-  mtcars %>% 
-  group_by(am) %>%
-  summarise(
+  mtcars |> 
+  group_by(am) |>
+  summarize(
     median_hp = median(hp),
     count = n(),
     sd = sd(hp),
     min = min(hp)
   )
 
-## #set the working directory
+## #Set the working directory
 ## setwd("/Users/edgar/my_scripts/")
-## #import data
+## #Import data
 ## df <- read_csv("my_data.csv")
 
-#List objects of the environment
-ls()
-#remove all objects with 
-#rm(list=ls())
+knitr::include_graphics('images/Fig44.png')
 
+## #A simple histogram
+## hist(data$x)
 
-## #insert fun and press TAB to insert the function snippet
+## # A histogram with adjusted options
+## hist(mpg,
+##      main="My title",
+##      xlab="The x label",
+##      col="darkgray",
+##      freq=FALSE
+## )
+
+## #Insert fun and press Tab to insert the function snippet
 ## name <- function(variables) {
 ## 
 ## }
 
+## #Use edit_rstudio_snippets() to edit your snippets directly
+## usethis::edit_rstudio_snippets()
 
 ## snippet fun
 ## 	${1:name} <- function(${2:variables}) {
 ## 		${0}
 ## 	}
 
-## snippet my_base_hist
-## 	hist(${1:variable},
-## 		main="${2:title}",
-## 		xlab="${3:label}",
-## 		col="darkgray",
-## 		freq=FALSE
-## 		)
+knitr::include_graphics('images/Fig47.png')
+
+#The dplyr website
+show_link("dplyr", browse = FALSE)
+
+#What They Forgot to Teach You About R:
+show_link("forgot_teach", browse = FALSE)
+#R for Data Science
+show_link("r4ds", browse = FALSE)
 
 
-## #Use edit_rstudio_snippets() to edit your snippets directly
-## usethis::edit_rstudio_snippets()
+Sys.time()
