@@ -1,45 +1,3 @@
-#library(tidyverse)
-#library(palmerpenguins)
-
-
-#knitr::opts_chunk$set(echo = FALSE)
-
-#options(max.print = 100)
-options(tibble.print_max = 25, tibble.print_min = 5)
-
-#knitr::opts_chunk$set(echo = FALSE)
-
-
-knitr::opts_chunk$set(
-  fig.process = function(filename) {
-    new_filename <- stringr::str_remove(
-      string = filename,
-      pattern = "-1"
-    )
-    fs::file_move(path = filename, new_path = new_filename)
-    ifelse(fs::file_exists(new_filename), new_filename, filename)
-  }
-)
-
-knitr::opts_chunk$set(
-  fig.width = 6,
-  fig.height = 4,
-  fig.path = "images/",
-  cache = TRUE,
-  echo = TRUE,
-  warning = FALSE,
-  message = FALSE,
-  eval = TRUE
-)
-
-#theme_set(theme_minimal()) # sets a default ggplot theme
-
-#data###
-
-
-#english environment
-Sys.setenv(LANG = "en")
-knitr::opts_chunk$set(tidy = "styler")
 
 
 ## # 2.1 Introducing R and RStudio ################################################
@@ -47,12 +5,11 @@ knitr::opts_chunk$set(tidy = "styler")
 #Install R:
 #https://www.r-project.org/
 
-knitr::include_graphics('images/Fig21.png')
 
-# Basic operations: +,-,*,/ 
-5 * 5 
+# Basic operations: +,-,*,/
+5 * 5
 #Powers
-3^2              
+3^2
 #Square root
 sqrt(16)
 #Logarithm (base: Euler's number e)
@@ -66,12 +23,10 @@ print("Hello world")
 #Install RStudio (from Posit):
 #https://rstudio.com/
 
-knitr::include_graphics('images/Fig22.png')
 
 #Run code via the shortcut (Windows/Mac):
 #Press: <Ctlr/Cmd> + <Enter>
 
-knitr::include_graphics('images/Fig23.png')
 
 #Do not forget the quotation marks ("" or '') to print a string
 print(Hello)
@@ -87,9 +42,8 @@ knitr::include_graphics('images/Fig24.png')
 ## setwd("~/R/Scripts/")
 
 ## #Copy and run the following code to generate a bar plot!
-## barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
+barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
 
-knitr::include_graphics('images/Fig25.png')
 
 ## #Install a package with install.packages("name")
 ## #Caution: The package name needs to be enclosed in quotation marks!
@@ -99,10 +53,10 @@ knitr::include_graphics('images/Fig25.png')
 ## #>Content type 'application/x-gzip' length 3001738 bytes (2.9 MB)
 ## #>==================================================
 ## #>downloaded 2.9 MB
-## 
+##
 ## #>The downloaded binary packages are in
 ## #>	/var/folders/0v/T//Rtmp4z29rO/downloaded_packages
-## 
+##
 
 #Remember: Package need to be installed only once.
 #But: Load a package each time you start a new R session!
@@ -113,7 +67,7 @@ library(palmerpenguins)
 
 ## #Install the PracticeR package
 ## devtools::install_GitHub("edgar-treischl/PracticeR")
-## 
+##
 
 knitr::include_graphics('images/Fig26.png')
 
@@ -122,13 +76,14 @@ knitr::include_graphics('images/Fig26.png')
 ## show_script("chapter02")
 
 #Show_link opens a browser with the link
+library(PracticeR)
 show_link("pr_website", browse = FALSE)
 
 ## #Ask for help
 ## ?barplot
 ## #Search for keywords within the help files
 ## help.search("keywords")
-## 
+##
 
 ## # 2.2 Base R ###################################################################
 
@@ -142,7 +97,7 @@ result
 
 ## #Everything is an object, for example, a bar plot:
 ## my_plot <- barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
-## 
+##
 
 #ABC of the assignment operator
 a <- 5
@@ -165,7 +120,7 @@ a == b
 #Is a not equal to (!=) b
 a != b
 
-# Assign like a Pro, press: 
+# Assign like a Pro, press:
 # <Alt> + <-> (Windows)
 # <Option> + <-> (Unix/Mac)
 # The assignment operator will appear out of nothing
@@ -188,7 +143,7 @@ running_number <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 running_number
 
 #Set a start and endpoint
-running_number <- c(1:10) 
+running_number <- c(1:10)
 running_number
 
 #The sequence function
@@ -204,7 +159,7 @@ rep(1:2, times=5)
 rep(1:2, each=5)
 
 ## #The basic structure of a non-functioning function:
-## 
+##
 ## my_fun <- function(x){
 ## #  build the sum of x, divided by n
 ##   }
@@ -250,7 +205,7 @@ df
 
 #Create a tibble
 library(tidyr)
-tibble(x = c(1, 2, 3, 4), 
+tibble(x = c(1, 2, 3, 4),
        y = c("a", "a", "a", "a"))
 
 
@@ -268,8 +223,8 @@ data.frame(a = 1:6, b = 1:3, c = 1:2)
 tibble(a = 1:6, b = 1:3, c = 1:2)
 
 #A list may combine heterogeneous input
-my_list <- list("numbers" = 1:10, 
-                "letters" = LETTERS[1:3], 
+my_list <- list("numbers" = 1:10,
+                "letters" = LETTERS[1:3],
                 "names" = c("Bruno", "Justin", "Miley", "Ariana") )
 my_list
 
@@ -337,6 +292,6 @@ ncol(adelie_df)
 ## #The dplyr::filter function
 ## library(dplyr)
 ## adelie_df <- filter(penguins, species == "Adelie")
-## 
+##
 
 Sys.time()

@@ -4,55 +4,6 @@
 
 library(patchwork)
 
-source("utils.R")
-source("source.R")
-
-Sys.setenv(lang = "en_US")
-
-
-theme_set(theme_minimal()) # sets a default ggplot theme
-#penguins_nomissing <- na.omit(penguins) # remove all rows with any missing values
-
-#options(width = 70)
-
-knitr::opts_chunk$set(
-  fig.process = function(filename) {
-    new_filename <- stringr::str_remove(string = filename,
-                                        pattern = "-1")
-    fs::file_move(path = filename, new_path = new_filename)
-    ifelse(fs::file_exists(new_filename), new_filename, filename)
-  }
-)
-
-
-
-
-knitr::opts_chunk$set(fig.height = 2.5, 
-                      fig.path='images/', 
-                      cache = TRUE,
-                      echo=TRUE, 
-                      warning=FALSE, 
-                      message=FALSE, 
-                      eval=TRUE,
-                      out.width='90%')
-
-#options(max.print = 100)
-#options(tibble.print_max = 25, tibble.print_min = 5)
-
-#include DG Fonts with showtext
-#library(showtext)
-#font_add("DGMetaScience", "C:/Users/gu99mywo/AppData/Local/Microsoft/Windows/Fonts/DGMetaScience-Regular.otf") 
-#font_add(family = "DGMetaScience", regular = "C:/Windows/Fonts")
-#showtext_auto()
-#knitr::opts_chunk$set(tidy = "styler")
-
-## #The hockeystick package provides data and graphs about climate change
-## library(hockeystick)
-## anomaly2k <- get_temp2k()
-## plot_temp2k(anomaly2k)
-
-knitr::include_graphics('images/Fig_071.pdf')
-
 #Libraries for section 7.1 #####
 library(ggplot2)
 library(ggthemes)
@@ -64,12 +15,12 @@ library(showtext)
 ## library(showtext)
 ## font_add_google("Ramaraja")
 ## showtext_auto()
-## 
+##
 ## p1 <- ggplot(penguins, aes(bill_length_mm, body_mass_g,
 ##                        color = island))+
 ##   geom_point()+
 ##   labs(tag = "A")
-## 
+##
 ## p2 <- ggplot(penguins, aes(bill_length_mm, body_mass_g,
 ##                        color = island))+
 ##   geom_point()+
@@ -83,17 +34,17 @@ library(showtext)
 ##        color = "The Islands:")+
 ##   theme(plot.title=element_text(size=14))+
 ##   scale_color_viridis_d(option = "viridis")
-## 
+##
 ## p1 + p2
 
 knitr::include_graphics('images/Fig_073.pdf')
 
 ## #Left plot: The ggplot function
 ## ggplot(data = penguins)
-## 
+##
 ## #Center: The aes function
 ## ggplot(data = penguins, aes(x = bill_length_mm, y = body_mass_g))
-## 
+##
 ## #Right plot: Add layers with a + sign!
 ## ggplot(data = penguins, aes(x = bill_length_mm, y = body_mass_g))+
 ##    geom_point()
@@ -137,17 +88,17 @@ knitr::include_graphics('images/Fig_076.pdf')
 
 ## #The ggthemes provides even more themes
 ## library(ggthemes)
-## 
+##
 ## #Left: Stata style
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g))+
 ##   geom_point()+
 ##   theme_stata()
-## 
+##
 ## #Right: Excel "style"
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g))+
 ##   geom_point()+
 ##   theme_excel()
-## 
+##
 
 p1 <- ggplot(penguins, aes(bill_length_mm, body_mass_g))+
   geom_point()+
@@ -163,13 +114,13 @@ p1 + p2
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g))+
 ##   geom_point()+
 ##   theme(axis.text = element_text(colour="gray",  angle=45))
-## 
+##
 ## #Or change how the plot.title is displayed
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g))+
 ##   geom_point()+
 ##   ggtitle("Title")+
 ##   theme(plot.title=element_text(size=16, face="bold"))
-## 
+##
 
 p1 <- ggplot(penguins, aes(bill_length_mm, body_mass_g))+
   geom_point()+
@@ -194,37 +145,37 @@ df[1:5, 1:3]
 ## #Add a font
 ## font_add(family = "American Typewriter",
 ##          regular = "AmericanTypewriter.ttc")
-## 
+##
 ## #showtext_auto render text automatically with showtext
 ## showtext_auto()
-## 
+##
 ## #Include the font within the theme, as the left plot shows:
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g))+
 ##   geom_point()+
 ##   ggtitle("Font: American Typewriter")+
 ##   theme_minimal(base_family = "American Typewriter")
-## 
+##
 
 ## library(showtext)
 ## #font_add(family = "Garamond", regular = "GARA.TTF")
 ## font_add(family = "American Typewriter", regular = "AmericanTypewriter.ttc")
-## 
+##
 ## #showtext_auto render text automatically with showtext
 ## showtext_auto()
-## 
+##
 ## p1 <- ggplot(penguins, aes(bill_length_mm, body_mass_g))+
 ##   geom_point()+
 ##   ggtitle("Font: American Typewriter")+
 ##   theme_minimal(base_family = "American Typewriter")
-## 
+##
 ## font_add_google("Pacifico")
-## 
+##
 ## p2 <-ggplot(penguins, aes(bill_length_mm, body_mass_g))+
 ##   geom_point()+
 ##   theme_minimal(base_size = 12, base_family = "Pacifico")+
 ##   ggtitle("Font: Pacifico")+
 ##   theme(plot.title=element_text(size=14))
-## 
+##
 ## p1 + p2
 
 knitr::include_graphics('images/Fig_079.pdf')
@@ -232,13 +183,13 @@ knitr::include_graphics('images/Fig_079.pdf')
 ## #Add a font from Google: https://fonts.google.com/
 ## #For example: Pacifico
 ## font_add_google("Pacifico")
-## 
+##
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g))+
 ##   geom_point()+
 ##   theme_minimal(base_size = 12, base_family = "Pacifico")+
 ##   ggtitle("Font: Pacifico")+
 ##   theme(plot.title=element_text(size=14))
-## 
+##
 
 #colors() returns implemented colors
 colors()[1:8]
@@ -246,12 +197,12 @@ colors()[1:8]
 ## #Bar plot with colors
 ## ggplot(penguins, aes(species))+
 ##   geom_bar(fill="white", color="black")
-## 
+##
 ## #Scatter plot with colors
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g))+
 ##   geom_point(fill="red", color="black", shape = 21)
-## 
-## 
+##
+##
 
 p1 <- ggplot(penguins, aes(species))+
   geom_bar(fill="white", color="black")
@@ -273,13 +224,13 @@ knitr::include_graphics('images/Fig_0711.pdf')
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g,
 ##                      color = island))+
 ##   geom_point()
-## 
+##
 ## #Add shape aesthetic
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g,
 ##                      color = island ,
 ##                      shape = island))+
 ##   geom_point()
-## 
+##
 
 p1 <- ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
   geom_point()
@@ -293,15 +244,15 @@ p1 + p2
 ## ggplot(penguins, aes(species, fill = island))+
 ##   geom_bar(position = "stack")+
 ##   scale_fill_manual(values = c("red", "blue", "lightblue"))
-## 
+##
 ## #Create a color palette with color names or hexadecimal code
 ## my_palette <- c("#e63946", "#457b9d", "#a8dadc")
-## 
+##
 ## #scale_color_manual
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
 ##   geom_point()+
 ##   scale_color_manual(values = my_palette)
-## 
+##
 
 p1 <- ggplot(penguins, aes(species, fill = island))+
   geom_bar(position = "stack")+
@@ -327,12 +278,12 @@ knitr::include_graphics('images/Fig_0714.pdf')
 ##   geom_bar() +
 ##   scale_fill_brewer(palette="Set1")+
 ##   coord_flip()
-## 
+##
 ## #scale_color_brewer
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
 ##   geom_point()+
 ##   scale_color_brewer(palette="Set2")
-## 
+##
 
 #scale_fill_brewer
 p1 <- ggplot(penguins, aes(species, fill = island))+
@@ -351,12 +302,12 @@ p1 + p2
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
 ##   geom_point()+
 ##   scale_color_viridis_d(option = "viridis")
-## 
+##
 ## #scale_color_viridis_c
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g, color = bill_length_mm))+
 ##   geom_point()+
 ##    scale_color_viridis_c(option = "mako")
-## 
+##
 
 p1 <- ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
   geom_point()+
@@ -380,13 +331,13 @@ p1 + p2
 ##   geom_point()+
 ##   scale_color_paletteer_d("rtist::munch")+
 ##   ggtitle("rtist::munch")
-## 
+##
 ## p2 <- ggplot(penguins, aes(body_mass_g, flipper_length_mm, color = island))+
 ##   geom_point()+
 ##   scale_color_paletteer_d("taylor::lover")+
 ##   ggtitle("taylor::lover")
-## 
-## 
+##
+##
 ## p1 + p2
 
 ## #paletteer_d returns discreet color palette
@@ -398,7 +349,7 @@ p1 + p2
 ##                      color = island))+
 ##   geom_point()+
 ##   theme(legend.position="none")
-## 
+##
 ## #Right display the legend on the right, left, top, or bottom
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
 ##   geom_point()+
@@ -406,11 +357,11 @@ p1 + p2
 
 p1 <- ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
   geom_point()+
-  theme(legend.position="none") 
+  theme(legend.position="none")
 
 p2 <- ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
   geom_point()+
-  theme(legend.position="bottom") 
+  theme(legend.position="bottom")
 
 p1 + p2
 
@@ -420,20 +371,20 @@ p1 + p2
 ##   scale_color_discrete(
 ##     name = "The Island:",
 ##     labels = c("A", "B", "C"))
-## 
+##
 ## #Remove the legend title
 ## ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
 ##   geom_point()+
 ##   theme(legend.title = element_blank())
-## 
+##
 
 p1 <- ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
   geom_point()+
   scale_color_discrete(
-    name = "The Island:", 
+    name = "The Island:",
     labels = c("A", "B", "C"))
-  
-  
+
+
 p2 <- ggplot(penguins, aes(bill_length_mm, body_mass_g, color = island))+
   geom_point()+
   theme(legend.title = element_blank())
@@ -455,7 +406,7 @@ p1 + p2
 ##        color = "The Islands:")+
 ##   theme(plot.title=element_text(size=14))+
 ##   scale_color_viridis_d(option = "viridis")
-## 
+##
 
 ## #Start the addin or use:
 ## esquisse::esquisser()

@@ -1,51 +1,4 @@
-#library(ggplot2)
-#library(datapasta)
-#library(tidyr)
 
-
-#library(gapminder)
-#library(magrittr)
-#library(dplyr)
-#library(palmerpenguins)
-
-#library(knitr)
-#library(prettydoc)
-#library(cowplot)
-#library(readr)
-
-#gapminder <- as.data.frame(gapminder::gapminder)
-
-#df_gp <- gapminder |>
-  #filter(continent == "Europe")
-ggplot2::theme_set(ggplot2::theme_minimal()) # sets a default ggplot theme
-
-source("utils.R")
-Sys.setenv(LANG = "en")
-
-
-options(tibble.print_max = 10, tibble.print_min = 6)
-
-options(max.print = 1000000)
-
-knitr::opts_chunk$set(
-  fig.width = 6, fig.height = 4, fig.path = "images/", cache = TRUE,
-  echo = TRUE, warning = FALSE, message = FALSE, eval = TRUE
-)
-
-knitr::opts_chunk$set(
-  fig.process = function(filename) {
-    new_filename <- stringr::str_remove(
-      string = filename,
-      pattern = "-1"
-    )
-    fs::file_move(path = filename, new_path = new_filename)
-    ifelse(fs::file_exists(new_filename), new_filename, filename)
-  }
-)
-
-knitr::opts_chunk$set(tidy = "styler")
-#english environment
-Sys.setenv(LANG = "en")
 
 
 #Chapter 4 needs the following packages #####
@@ -59,9 +12,6 @@ library(PracticeR)
 
 ## # 4.1 The five key functions of dplyr ##########################################
 
-## five_dplyr()
-
-knitr::include_graphics('images/Fig41.pdf')
 
 mtcars_df <- mtcars
 #The mtcars data set
@@ -105,10 +55,10 @@ peanuts |> filter(sex == "male" & height_cm < 181)
 #Or less than or equal to <=
 #peanuts |> filter(sex == "male" & height_cm <= 181)
 
-#Arrange the data in an ascending order 
+#Arrange the data in an ascending order
 arrange(mtcars, hp)
 
-#Arrange the data in a descending order 
+#Arrange the data in a descending order
 arrange(mtcars, desc(hp))
 
 #Select mpg and hp
@@ -121,7 +71,7 @@ select(mtcars, mpg:hp)
 select(mtcars, -(mpg:hp))
 
 #Select returns a data frame
-hp <- select(mtcars, hp) 
+hp <- select(mtcars, hp)
 is.data.frame(hp)
 
 #Use pull to extract a variable/column vector
@@ -129,11 +79,11 @@ hp <- pull(mtcars, hp)
 is.vector(hp)
 
 #Create a small(er) subset
-df <- select(mtcars, hp) 
+df <- select(mtcars, hp)
 head(df)
 
 #Mutate and create new variables
-mutate(df, 
+mutate(df,
        kw = hp * 0.74570,
        hp_new = round(kw * 1.34102, 2))
 
@@ -145,7 +95,7 @@ transmute(mtcars,
           kw = hp * conversion)
 
 #Summarize variables
-mtcars |> 
+mtcars |>
   summarize(mean_hp = mean(hp))
 
 #Group by variables
@@ -155,7 +105,7 @@ compare_group <- group_by(mtcars, am)
 summarize(compare_group, hp_mean = mean(hp))
 
 #Use the pipe operator to combine steps
-mtcars |> 
+mtcars |>
   group_by(am) |>
   summarize(
     mean_hp = mean(hp)
@@ -170,35 +120,35 @@ head(gssm2016)
 ## library(essurvey)
 ## #Set your email address to get access
 ## set_email("your@email.com")
-## 
+##
 ## #Import the eight round for Germany
 ## germany <- import_country(
 ##   country = "Germany",
 ##   rounds = c(8)
 ##   )
-## 
+##
 ## show_link("tidy_tuesday", browse = F )
 
 #First attempts ...
-gssm2016 |> 
-  mutate(age_mean = mean(age))|> 
+gssm2016 |>
+  mutate(age_mean = mean(age))|>
   head()
 
 #Select variables that are needed ...
-gssm2016 |> 
-  select(age, income_rc, partners, happy)|> 
+gssm2016 |>
+  select(age, income_rc, partners, happy)|>
   mutate(age_mean = mean(age)
-  )|> 
+  )|>
   head()
 
 #An example data
-missing_example <- data.frame(x = c(1, NA, 3, NA)) 
+missing_example <- data.frame(x = c(1, NA, 3, NA))
 
 #Drop_na drops NA
 tidyr::drop_na(missing_example, x)
 
-df <- gssm2016 |> 
-  select(age, income_rc, partners, happy) |> 
+df <- gssm2016 |>
+  select(age, income_rc, partners, happy) |>
   drop_na() |>
   mutate(age_mean = mean(age)
   )
@@ -206,17 +156,17 @@ df <- gssm2016 |>
 head(df)
 
 #Relocate variables to get a better overview
-df |> 
-  relocate(age_mean, .after = age) 
-  
+df |>
+  relocate(age_mean, .after = age)
 
-#Instead of selecting variables, create a variable list 
+
+#Instead of selecting variables, create a variable list
 varlist <- c("income_rc", "partners", "happy", "age")
 
 #Include relocate in the mutate step
-df |> 
-  select(varlist) |> 
-  drop_na() |> 
+df |>
+  select(all_of(varlist)) |>
+  drop_na() |>
   mutate(age_mean = round(mean(age), 2), .before = age
   )
 
@@ -242,19 +192,19 @@ if_else(sex == "f", 0, 1)
 sex <- c(0, 1, 0)
 if_else(sex == 0, "female", "male")
 
-df |> 
-  select(age, age_mean)|> 
-  mutate(older = if_else(age > age_mean, "older", "younger"), 
+df |>
+  select(age, age_mean)|>
+  mutate(older = if_else(age > age_mean, "older", "younger"),
          .after = age_mean)
 
 #chain steps with gssm2016 data
-gssm2016 |> 
+gssm2016 |>
   drop_na(age)|>
-  transmute(age, 
+  transmute(age,
             older = if_else(age > mean(age), TRUE, FALSE))
 
 
-df |> 
+df |>
   transmute(age,
             older_younger = case_when(
               age <= 17             ~ "younger",
@@ -263,14 +213,14 @@ df |>
 
 x <- data.frame(age = c(17, 77, 51, NA))
 
-x |> 
+x |>
   transmute(age,
             older_younger = case_when(
               age <= 17   ~ "younger",
               age >=  65   ~ "older",
               TRUE        ~ "in-between"))
 
-df |> 
+df |>
   mutate(age,
         older_younger = case_when(
           age <= 17 & happy =="Pretty Happy" ~ "young_happy",
@@ -278,12 +228,12 @@ df |>
           TRUE                               ~ "others"))
 
 #Between selects observation between a certain range
-df |> 
+df |>
   mutate(age_filter = between(age, 18, 65))
 
 #Restrict the analysis sample
-df |> 
-  mutate(age_filter = between(age, 18, 65))|> 
+df |>
+  mutate(age_filter = between(age, 18, 65))|>
   filter(age_filter == "TRUE")
 
 #Recode with ifelse
@@ -306,8 +256,8 @@ recode_factor(df$male , m = "Men", f = "Women")
 recode(df$male_num , `1` = 1, `2` = 0)
 
 #Create new variables to check if any errors are introduced
-df |> 
-  select(male)|> 
+df |>
+  select(male)|>
   mutate(male_new = if_else(male == "f", "Women", "Men"))
 
 summarize(mtcars, mpg = mean(mpg),
@@ -325,17 +275,17 @@ summarize(mtcars, across(everything(), mean))
 head(mtcars_df)
 
 ## #Augment your dplyr skills with further packages
-## mtcars |>
-##   tibble::rownames_to_column(var = "car") |>
-##   head()
-
-mtcars_df |> 
-  tibble::rownames_to_column(var = "car") |> 
+mtcars |>
+  tibble::rownames_to_column(var = "car") |>
   head()
 
-mtcars |> 
-  select(mpg)|> 
-  arrange(mpg)|> 
+mtcars_df |>
+  tibble::rownames_to_column(var = "car") |>
+  head()
+
+mtcars |>
+  select(mpg)|>
+  arrange(mpg)|>
   mutate(running_number = 1:nrow(mtcars)
          ) |>
   head()
@@ -378,15 +328,15 @@ knitr::include_graphics('images/Fig43.png')
 
 #https://style.tidyverse.org/
 
-#Version A: 
+#Version A:
 df<-mtcars|>group_by(am)|>
   summarize(
     median_hp = median(hp), count = n(), sd = sd(hp), min = min(hp)
   )
 
 #Version B:
-df <- 
-  mtcars |> 
+df <-
+  mtcars |>
   group_by(am) |>
   summarize(
     median_hp = median(hp),
@@ -415,7 +365,7 @@ knitr::include_graphics('images/Fig44.png')
 
 ## #Insert fun and press Tab to insert the function snippet
 ## name <- function(variables) {
-## 
+##
 ## }
 
 ## #Use edit_rstudio_snippets() to edit your snippets directly

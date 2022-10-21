@@ -2,38 +2,6 @@ library(tidyverse)
 library(palmerpenguins)
 
 
-knitr::opts_chunk$set(echo = FALSE)
-
-#options(max.print = 100)
-options(tibble.print_max = 25, tibble.print_min = 5)
-
-#knitr::opts_chunk$set(echo = FALSE)
-
-
-knitr::opts_chunk$set(
-  fig.process = function(filename) {
-    new_filename <- stringr::str_remove(string = filename,
-                                        pattern = "-1")
-    fs::file_move(path = filename, new_path = new_filename)
-    ifelse(fs::file_exists(new_filename), new_filename, filename)
-  }
-)
-
-knitr::opts_chunk$set(
-  fig.width = 6, fig.height = 4, fig.path = "images/", cache = TRUE,
-  echo = TRUE, warning = FALSE, message = FALSE, eval = TRUE
-)
-
-theme_set(theme_minimal()) # sets a default ggplot theme
-
-#data###
-
-knitr::opts_chunk$set(tidy = "styler")
-
-
-
-knitr::include_graphics('images/Fig0101.png')
-
 #Use R as a calculator:
 1 + 2
 
@@ -44,13 +12,13 @@ head(mtcars)
 ## library(viridis)
 ## library(dplyr)
 ## library(showtext)
-## 
+##
 ## font_add_google("Lato", "Lato")
 ## #font_add_google("Combo", "Combo")
-## 
+##
 ## ## Automatically use showtext to render text for future devices
 ## showtext_auto()
-## 
+##
 ## gapminder |>
 ##   filter (year == 2007) |>
 ##   mutate(pop=pop/1000000) |>
@@ -71,7 +39,7 @@ head(mtcars)
 ##        caption = "Data: Gapminder") +
 ##   guides(color = guide_legend(override.aes = list(size = 4),
 ##                               reverse=TRUE))
-## 
+##
 
 knitr::include_graphics('images/Fig_0102.pdf')
 

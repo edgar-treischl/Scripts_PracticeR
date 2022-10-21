@@ -1,32 +1,7 @@
 library(ggplot2)
 
 
-ggplot2::theme_set(ggplot2::theme_minimal()) # sets a default ggplot theme
-#gssm2016 <- readRDS(file = "gssm2018.rds")
 
-
-options(tibble.print_max = 25, tibble.print_min = 5)
-
-#fig.width = 6
-knitr::opts_chunk$set(
-  fig.height = 3.5, fig.path = "images/", cache = TRUE,
-  echo = TRUE, warning = FALSE, message = FALSE, eval = TRUE, out.width='90%'
-)
-
-knitr::opts_chunk$set(
-  fig.process = function(filename) {
-    new_filename <- stringr::str_remove(string = filename,
-                                        pattern = "-1")
-    fs::file_move(path = filename, new_path = new_filename)
-    ifelse(fs::file_exists(new_filename), new_filename, filename)
-  }
-)
-
-
-source("utils.R")
-Sys.setenv(LANG = "en")
-
-knitr::opts_chunk$set(tidy = "styler")
 
 
 #Setup of Chapter 3 #####
@@ -39,23 +14,11 @@ library(DataExplorer)
 library(PracticeR)
 library(dplyr)
 
-df <- PracticeR::gssm2016 |> 
-  dplyr::select(age, sex, happy, income16, race)
 
-df$income <-  as.numeric(df$income16)
-
-df <- df |> dplyr::select(age, sex, happy, income, race)
-
-# df$happy <- forcats::fct_collapse(gssm2016$happy, 
-#                                Happy = c("Very Happy", "Pretty Happy"))
-
-df$happy <- stringr::str_replace_all(df$happy , "Not Too Happy", "Not happy")
-
-df$happy <- as.factor(df$happy)
 
 ## #Take a glimpse at your data frame!
-## df <- PracticeR::gssm5
-## glimpse(df)
+df <- PracticeR::gssm5
+glimpse(df)
 
 #Use $ for column vectors
 str(df$sex)
@@ -85,7 +48,7 @@ freq(df$sex)
 ## count_sex <- table(df$sex)
 ## #Left plot
 ## barplot(count_sex)
-## 
+##
 ## #Right plot
 ## #The bar plot with title and label adjustments
 ## barplot(count_sex,
@@ -99,11 +62,9 @@ par(mfrow=c(1,2))
 barplot(count_sex)
 barplot(count_sex,
         main="Sex",
-        ylab="Count") 
+        ylab="Count")
 
-## pacman()
 
-## fruits_pie()
 
 #Plot several bar graphs
 library(DataExplorer)
@@ -111,10 +72,10 @@ plot_bar(df)
 
 ## library(ggplot2)
 ## library(ggblanket)
-## 
+##
 ## #Left plot
 ## gg_bar(df, x = sex)
-## 
+##
 ## #Right plot
 ## gg_histogram(df, x = age)
 
@@ -122,19 +83,19 @@ plot_bar(df)
 ## library(ggplot2)
 ## library(ggblanket)
 ## library(patchwork)
-## 
+##
 ## p1 <- df|>
 ##   gg_bar(
 ##     x = sex
 ##   )
-## 
+##
 ## p2 <- df|>
 ##   gg_histogram(
 ##     x = age
 ##   )
-## 
+##
 ## p1 + p2
-## 
+##
 ## #What does ggblanket return?
 ## my_plot <- gg_bar(df, x = sex)
 ## class(my_plot)
@@ -150,28 +111,28 @@ fruit <- factor(c("pear", "apple", "apple", "cherry", "apple"))
 fruit
 
 #Create a rating variable
-rating <- factor(c(rep("low", 10), 
-                   rep("high", 2), 
+rating <- factor(c(rep("low", 10),
+                   rep("high", 2),
                    rep("medium",7)
                    ))
 #Inspect the order
 levels(rating)
 
 #Set the levels
-rating <- factor(rating, 
+rating <- factor(rating,
                  levels = c("low", "medium", "high"))
 
 levels(rating)
 
 #A messy factor variable
-sex <- factor(c(rep("F", 10), 
+sex <- factor(c(rep("F", 10),
                 rep("M",7)
                    ))
 #A messy table
 table(sex)
 
 #Create or adjust the labels
-sex <- factor(sex, 
+sex <- factor(sex,
               levels = c("F", "M"),
               labels = c("female", "male"))
 
@@ -182,7 +143,7 @@ table(sex)
 #Minima
 min(c(1, 5, 6, 8, 11))
 #Median
-median(c(1, 5, 6, 8, 11)) 
+median(c(1, 5, 6, 8, 11))
 #Maxima
 max(c(1, 5, 6, 8, 11))
 #Standard deviation
@@ -205,13 +166,13 @@ summary(df[1:4])
 
 #The descr() function returns descriptive summary statistics
 library(summarytools)
-descr(gssm2016, 
+descr(gssm2016,
       stats = c("min", "mean", "sd", "max"),
       transpose = TRUE)
 
 ## #Left plot
 ## hist(df$age)
-## 
+##
 ## #Right plot
 ## hist(df$age,
 ##      breaks = 6,
@@ -220,12 +181,12 @@ descr(gssm2016,
 ##      xlab = "Age",)
 
 par(mfrow=c(1,2))
-hist(df$age) 
-hist(df$age, 
+hist(df$age)
+hist(df$age,
      breaks = 6,
      freq=FALSE,
      main="Density",
-     xlab = "Age",) 
+     xlab = "Age",)
 
 
 #Plot several histograms
@@ -243,22 +204,22 @@ as.numeric(x)
 as.character(y)
 
 ## #Income as numeric
-## df$income <- as.numeric(gssm2016$income16)
-## 
+df$income <- as.numeric(gssm2016$income16)
+##
 ## #Left plot
 ## boxplot(df$income,
 ##         horizontal = TRUE)
-## 
+##
 ## #Right plot
 ## boxplot(income~sex,
 ##         data=df)
-## 
+##
 
 par(mfrow=c(1,2))
 boxplot(df$income,
-        horizontal = TRUE) 
-boxplot(income~sex, 
-        data=df) 
+        horizontal = TRUE)
+boxplot(income~sex,
+        data=df)
 
 ## #Create a data report
 ## library(DataExplorer)
@@ -271,7 +232,7 @@ boxplot(income~sex,
 levels(df$happy)
 
 #Collapse level of a factor variable with fct_collapse
-df$happy <- forcats::fct_collapse(df$happy, 
+df$happy <- forcats::fct_collapse(df$happy,
                                Happy = c("Pretty Happy", "Very Happy"))
 levels(df$happy)
 
@@ -279,12 +240,12 @@ levels(df$happy)
 table(df$sex, df$happy)
 
 #A cross table
-summarytools::ctable(x = df$sex, 
+summarytools::ctable(x = df$sex,
                      y = df$happy,
                      prop = "r")
 
 #Boxes are proportional to the number of observations
-spineplot(happy ~ sex, 
+spineplot(happy ~ sex,
           data = df)
 
 
@@ -292,7 +253,7 @@ spineplot(happy ~ sex,
 plot(y = df$income, x = df$age,
      pch = 20, frame = FALSE)
 #And a regression line
-abline(lm(income ~ age, data = df), 
+abline(lm(income ~ age, data = df),
        col = "red")
 
 
@@ -309,24 +270,24 @@ library(correlation)
 results <- correlation(mtcars[1:5])
 results
 
-## #A correlation plot example
-## library(corrplot)
-## corr_matrix <- cor(mtcars)
-## 
-## #Left plot
-## corrplot(corr_matrix)
-## 
-## 
+#A correlation plot example
+library(corrplot)
+corr_matrix <- cor(mtcars)
+
+#Left plot
+corrplot(corr_matrix)
+##
+##
 ## #Right plot
 ## #Estimate p-values
-## p_values <- cor.mtest(mtcars, conf.level = 0.95)
-## #Corrplot
-## corrplot(corr_matrix,
-##          p.mat = p_values$p,
-##          order = 'AOE',
-##          type = 'lower',
-##          diag=FALSE,
-##          addCoef.col ='black', number.cex = 0.8, tl.col = 'black')
+p_values <- cor.mtest(mtcars, conf.level = 0.95)
+#Corrplot
+corrplot(corr_matrix,
+         p.mat = p_values$p,
+         order = 'AOE',
+         type = 'lower',
+         diag=FALSE,
+         addCoef.col ='black', number.cex = 0.8, tl.col = 'black')
 
 knitr::include_graphics('images/Fig312.pdf')
 

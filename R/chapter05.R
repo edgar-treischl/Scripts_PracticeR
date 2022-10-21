@@ -1,36 +1,5 @@
-library(ggplot2)
-#library(cowplot)
-#library(gapminder)
-library(patchwork)
-source("utils.R")
-Sys.setenv(LANG = "en")
 
-#gapminder <- as.data.frame(gapminder::gapminder)
 
-#df_gp <- gapminder |>
-  #filter(continent == "Europe")
-
-theme_set(theme_minimal()) # sets a default ggplot theme
-
-options(tibble.print_max = 25, tibble.print_min = 5)
-
-knitr::opts_chunk$set(
-  fig.width = 6, fig.height = 3, fig.path = "images/", cache = TRUE,
-  echo = TRUE, warning = FALSE, message = FALSE, eval = TRUE
-)
-
-knitr::opts_chunk$set(
-  fig.process = function(filename) {
-    new_filename <- stringr::str_remove(
-      string = filename,
-      pattern = "-1"
-    )
-    fs::file_move(path = filename, new_path = new_filename)
-    ifelse(fs::file_exists(new_filename), new_filename, filename)
-  }
-)
-
-#knitr::opts_chunk$set(tidy = "styler")
 
 #The setup of Chapter 5 #####
 library(dplyr)
@@ -52,7 +21,6 @@ library(tidyr)
 ## #The haven package reads SPSS/Stata files
 ## haven::read_stata("my_stata.dta")
 
-knitr::include_graphics('images/Fig501.png')
 
 ## #Copy the code to import data from the code preview
 ## overweight_world <- read_csv("~/data/overweight_world.csv")
@@ -95,7 +63,7 @@ guess_parser(c("TRUE", "FALSE"))
 ## data.frame(
 ##   measurement 1 = 1,
 ##   2016 = 1)
-## 
+##
 ## #> Error: unexpected numeric constant in:
 ## #> "data.frame(
 ## #>  measurement 1"
@@ -103,13 +71,13 @@ guess_parser(c("TRUE", "FALSE"))
 
 #Insert backticks
 data.frame(
-  `measurement 1` = 1, 
+  `measurement 1` = 1,
   `2016` = 1
 )
 
 #Tibble lets us break name conventions
 tibble(
-  `measurement 1` = 1, 
+  `measurement 1` = 1,
   `2016` = 2
 )
 
@@ -123,16 +91,16 @@ names(iris)
 
 ## #snake_case
 ## my_var <- 1
-## 
+##
 ## #SCREAMING_SNAKE_CASE
 ## MY_VAR <- 1
-## 
+##
 ## #camelCase
 ## myVar <- 1
-## 
+##
 ## #Upper_Camel
 ## MyVar <- 1
-## 
+##
 ## #kebab-case (hmm-mmmm)
 ## my-var <- 1
 
@@ -140,21 +108,21 @@ names(iris)
 ## dplyr::rename(df, sepal_length = Sepal.Length)
 
 #Include rename() in select
-iris |> 
+iris |>
   select(
     new_var = Sepal.Length
     )
 
-#The janitor package cleans data 
-iris |> 
+#The janitor package cleans data
+iris |>
   janitor::clean_names()
 
 #Another messy data set
-messy_data <- data.frame(firstName   = 1:2, 
-                         Second_name  = 1:2, 
+messy_data <- data.frame(firstName   = 1:2,
+                         Second_name  = 1:2,
                          `income in €`  = 1:2,
-                         `2009`      = 1:2, 
-                         measurement = 1:2, 
+                         `2009`      = 1:2,
+                         measurement = 1:2,
                          measurement = 1:2)
 names(messy_data)
 
@@ -175,14 +143,14 @@ mean(x)
 is.na(x)
 
 #na.rm removes NA
-mean(x, na.rm = TRUE) 
+mean(x, na.rm = TRUE)
 
 #Shall we include na.rm?
 x[x == 99] <- NA
 mean(x, na.rm=TRUE)
 
 rubin_simdata <- rubin_df()
-rubin_simdata <- rubin_simdata |> 
+rubin_simdata <- rubin_simdata |>
   select(income:education)
 
 ## #The next console shows the `head()` of the simulated data.
@@ -225,7 +193,7 @@ vis_miss(df)
 df
 
 #Select all variables, except x with a minus (-) sign
-df |> 
+df |>
   select(-age_child2)
 
 #coalesce replaces NAs
@@ -234,8 +202,8 @@ coalesce(children, 0)
 
 #Drop (all) NAs
 library(tidyr)
-df |> 
-  select(-c(age_child2, country)) |> 
+df |>
+  select(-c(age_child2, country)) |>
   drop_na()
 
 #na_if takes care of alternative missing values
@@ -243,8 +211,8 @@ x <- c(1, 999, 5, 7, 999)
 na_if(x, 999)
 
 #Replace values
-df <- df |> 
-  select(-c(age_child2, country)) |> 
+df <- df |>
+  select(-c(age_child2, country)) |>
   mutate(age = replace(age, age == "999", NA),
          sex = replace(sex, sex == "NA", NA))
 df
@@ -270,7 +238,7 @@ library(forcats)
 fct_count(gss_cat$marital)
 
 #Relevel manually
-f <- fct_relevel(gss_cat$marital, 
+f <- fct_relevel(gss_cat$marital,
                  c("Married", "Never married"))
 fct_count(f)
 
@@ -278,8 +246,8 @@ fct_count(f)
 f <- fct_recode(gss_cat$marital,
                 "NA" = "No answer",
                 `Not married` = "Never married",
-                `Not married` = "Separated", 
-                `Not married` = "Divorced", 
+                `Not married` = "Separated",
+                `Not married` = "Divorced",
                 `Not married` = "Widowed"
 )
 
@@ -288,16 +256,16 @@ fct_count(f)
 #Unique levels
 fct_unique(gss_cat$relig)
 
-#Collapse levels 
-f <- fct_collapse(gss_cat$marital, 
-                  `Not married` = c("Never married", 
-                                  "Separated", 
-                                  "Divorced", 
+#Collapse levels
+f <- fct_collapse(gss_cat$marital,
+                  `Not married` = c("Never married",
+                                  "Separated",
+                                  "Divorced",
                                   "Widowed"))
 fct_count(f)
 
 #Keep selected variables and others
-f <-fct_other(gss_cat$marital, 
+f <-fct_other(gss_cat$marital,
               keep = c("Married", "No answer"))
 
 fct_count(f)
@@ -307,7 +275,7 @@ f <- fct_infreq(gss_cat$relig)
 fct_count(f)|> head(n = 10)
 
 #Lump together
-f <- fct_lump(gss_cat$relig, n = 5) 
+f <- fct_lump(gss_cat$relig, n = 5)
 f <- fct_infreq(f)
 fct_count(f)
 

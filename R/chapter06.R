@@ -1,35 +1,3 @@
-knitr::opts_chunk$set(echo = TRUE)
-#library(GGally)
-#library(ggplot2)
-#library(tidyverse)
-library(patchwork)
-
-#library(cowplot)
-#library(viridis)
-#library(dotwhisker)
-library(huxtable)
-options(huxtable.knit_print_df = FALSE)
-
-#To get nice numbers for the pdf
-knitr::opts_chunk$set(
-  fig.process = function(filename) {
-    new_filename <- stringr::str_remove(string = filename,
-                                        pattern = "-1")
-    fs::file_move(path = filename, new_path = new_filename)
-    ifelse(fs::file_exists(new_filename), new_filename, filename)
-  }
-)
-
-
-knitr::opts_chunk$set(
-  fig.height = 3.5, fig.path = "images/", cache = TRUE,
-  echo = TRUE, warning = FALSE, message = FALSE, eval = TRUE
-)
-
-#Data section
-
-source("utils.R")
-Sys.setenv(lang = "en_US")
 
 
 #The setup of Chapter 6 #####
@@ -58,7 +26,7 @@ head(Galton)
 
 ## #plot(x, y),
 ## reg_illu()
-## 
+##
 
 knitr::include_graphics('images/fig_61.pdf')
 
@@ -67,12 +35,12 @@ model <- lm(child ~ parent, data = Galton)
 model
 
 #How tall will a child be on average if parents are 68 inches?
-23.9415 + 68 * 0.6463 
+23.9415 + 68 * 0.6463
 
 #generate example data
-new_data <- data.frame(parent = c(55, 68, 75)) 
+new_data <- data.frame(parent = c(55, 68, 75))
 #apply the model with predict
-predict(model, new_data) 
+predict(model, new_data)
 
 #Calculation the slope manually
 Galton |>
@@ -80,7 +48,7 @@ Galton |>
          mean_y = mean(child),
          cov  = sum((parent - mean_x)*(child-mean_y)),
          variance_x = sum((parent - mean_x)^2),
-         slope = cov / variance_x 
+         slope = cov / variance_x
          )
 
 #use the summary function to get more information about your model
@@ -110,8 +78,8 @@ head(penguins)
 #the independent variable
 fct_count(penguins$species)
 
-penguins <- penguins |> 
-  mutate(species_bin = if_else(species == 
+penguins <- penguins |>
+  mutate(species_bin = if_else(species ==
                             "Adelie", "Adelie", "Others"))
 
 fct_count(penguins$species_bin)
@@ -126,20 +94,20 @@ summary(m1)
 ## #Use the pwr package to run a power analysis
 ## pwr::pwr.r.test(r=0.5, power=0.8, n=NULL, sig.level=0.05, alternative = "two.sided")
 
-#lm(income ~ happy, data = gssm2016) 
+#lm(income ~ happy, data = gssm2016)
 lm(body_mass_g ~ species, data = penguins)
 
 
 #relevel the reference group
-#gssm2016$happy <- relevel(gssm2016$happy, ref = 3)  
-penguins$species <- relevel(penguins$species, ref = 2)  
+#gssm2016$happy <- relevel(gssm2016$happy, ref = 3)
+penguins$species <- relevel(penguins$species, ref = 2)
 
-#lm(income ~ happy, data = gssm2016) 
+#lm(income ~ happy, data = gssm2016)
 lm(body_mass_g ~ species, data = penguins)
 
 #Control for confounding variables
 # m2 <- lm(income ~ happy_bin + married + sex, data = gssm2016)
-# m2 
+# m2
 
 m2 <- lm(body_mass_g ~ species + sex, data = penguins)
 summary(m2)
@@ -153,7 +121,7 @@ knitr::include_graphics('images/fig_63.pdf')
 ## #The models
 ## m1 <- lm(body_mass_g ~ species, data = penguins)
 ## m2 <- lm(body_mass_g ~ species + sex, data = penguins)
-## 
+##
 ## #Huxreg helps to compare the models!
 ## huxtable::huxreg(m1, m2)
 
@@ -171,40 +139,40 @@ summary(m3)
 ## library(interactions)
 ## cat_plot(m3, pred = species, modx = sex,
 ##          point.shape = TRUE, vary.lty = FALSE)
-## 
+##
 ## interact_plot(m3a, pred = bill_length_mm, modx = sex,
 ##               interval = TRUE, plot.points = FALSE)
 
 #sim_slopes(m3, pred = happy_bin, modx = sex, jnplot = TRUE)
 
-p1<- cat_plot(m3, pred = species, modx = sex, 
+p1<- cat_plot(m3, pred = species, modx = sex,
          point.shape = TRUE, vary.lty = FALSE)+
     labs(subtitle = "A: cat_plot")+
   theme(legend.position="bottom")
 
 
-  
 
-p2 <- interact_plot(m3a, pred = bill_length_mm, modx = sex, 
+
+p2 <- interact_plot(m3a, pred = bill_length_mm, modx = sex,
               interval = TRUE, plot.points = FALSE)+
     labs(subtitle = "B: interact_plot")+
   theme(legend.position="bottom")
 
 
-# p1<- cat_plot(m3, pred = happy_bin, modx = sex, 
+# p1<- cat_plot(m3, pred = happy_bin, modx = sex,
 #          point.shape = TRUE)+
 #     labs(subtitle = "A: cat_plot")+
 #   theme(legend.position="bottom")
-# 
-# 
-#   
-# 
-# p2 <- interact_plot(m3a, pred = age, modx = happy_bin, 
+#
+#
+#
+#
+# p2 <- interact_plot(m3a, pred = age, modx = happy_bin,
 #               interval = TRUE, plot.points = FALSE)+
 #     labs(subtitle = "B: interact_plot")+
 #   theme(legend.position="bottom")
 
-
+library(patchwork)
 p1 + p2
 
 #Example models
@@ -221,10 +189,10 @@ compare_performance(m1, m2,
 ## #drop observations that will be droped in later models
 ## penguins <- penguins |>
 ##   tidyr::drop_na(sex)
-## 
+##
 ## #rerun the model
 ## m1 <- lm(body_mass_g ~ species, data = penguins)
-## 
+##
 
 #Performance radar plot
 library(see)
@@ -252,7 +220,7 @@ export_summs(model, coefs = coef_names)
 ## export_summs(m1, m2, scale = FALSE, coefs = coef_names,
 ##              error_format = "{statistic})",
 ##              to.file = "docx", file.name = "test.docx")
-## 
+##
 
 ## # 6.3 Visualization techniques #################################################
 
@@ -294,7 +262,7 @@ rstandard(model)[1:5]
 ## library(ggeffects)
 ## #save prediction
 ## predict_model <- ggpredict(model, terms = "bill_length_mm")
-## 
+##
 ## #plot scatter plot with residuals
 ## plot(predict_model,
 ##      residuals = TRUE,
@@ -326,7 +294,7 @@ x <- check_heteroscedasticity(model)
 plot(x)
 
 
-#check_heteroscedasticity retuns the Breusch-Pagan test (1979) 
+#check_heteroscedasticity retuns the Breusch-Pagan test (1979)
 lmtest::bptest(model)
 
 ## #check_heteroscedasticity interprets it
@@ -344,9 +312,9 @@ check_collinearity(model)
 check_normality(model)
 
 #cluster robust model
-cluster_model <- lm_robust(flipper_length_mm ~ bill_length_mm + sex, 
+cluster_model <- lm_robust(flipper_length_mm ~ bill_length_mm + sex,
                            data = penguins,
-                           clusters = island) 
+                           clusters = island)
 
 summary(cluster_model)
 
@@ -358,10 +326,10 @@ summary(cluster_model)
 ##          data = penguins)
 ## m2 <- lm(flipper_length_mm ~ bill_length_mm + sex,
 ##          data = penguins)
-## 
+##
 ## #left: plot_summs from jtools returns a dot-and-whisker
 ## plot_summs(m1)
-## 
+##
 ## #right: add coefficient labels
 ## plot_summs(m1, m2, coefs = c("Bill length" = "bill_length_mm",
 ##                            "Male" = "sexmale"))
@@ -389,19 +357,19 @@ broom::tidy(m1, conf.int = TRUE)
 ## library(dotwhisker)
 ## #left: the dwplot
 ## dwplot(m1)
-## 
+##
 ## #right: add a reference line
 ## dwplot(m1,
 ##        vline = geom_vline(xintercept = 0,
 ##                             color = "black"))
-## 
+##
 
 library(dotwhisker)
 #the dot-and-whisher plot
 p1 <- dwplot(m1)
 
 #add a reference line
-p2 <- dwplot(m1, 
+p2 <- dwplot(m1,
              vline = geom_vline(xintercept = 0,
                             color = "black"))
 
@@ -409,11 +377,11 @@ p1 + p2
 
 ## #include several models as list
 ## dwplot(list(m1, m2))
-## 
+##
 ## #sort/resort models via model_order
 ## dwplot(list(m1, m2),
 ##        model_order = c("Model 2", "Model 1"))
-## 
+##
 
 p1 <- dwplot(list(m1, m2))+
   theme_gray(base_size = 10)
@@ -428,32 +396,32 @@ p1 + p2
 
 ## dwplot(m2,
 ##        vars_order = c("sexmale", "bill_length_mm"))
-## 
+##
 ## dwplot(m2) |>
 ##   relabel_predictors(c(bill_length_mm = "Bill length",
 ##                        sexmale = "Male penguins"))
-## 
+##
 
 p1 <- dwplot(m2,
              vars_order = c("sexmale", "bill_length_mm"))
 
 p2 <- dwplot(m2) |>
-  relabel_predictors(c(bill_length_mm = "Bill length", 
+  relabel_predictors(c(bill_length_mm = "Bill length",
                        sexmale = "Male penguins"))
 
 p1 + p2
 
 plot <- dwplot(list(m1, m2),
        dot_args = list(size = 2),
-       vline = geom_vline(xintercept = 0, 
-                          colour = "black", 
+       vline = geom_vline(xintercept = 0,
+                          colour = "black",
                           linetype = 2),
        model_order = c("Model 1", "Model 2")) |>
-  relabel_predictors(c(bill_length_mm = "Bill length", 
+  relabel_predictors(c(bill_length_mm = "Bill length",
                        sexmale = "Male penguins"))+
   ggtitle("Results")+
   theme_minimal(base_size = 12)+
-  xlab("Effect on body mass") + 
+  xlab("Effect on body mass") +
   ylab("Coefficient") +
   theme(plot.title = element_text(face = "bold"),
         legend.title = element_blank()) +
