@@ -1,10 +1,8 @@
-
-
 ## # 2.1 Introducing R and RStudio ################################################
+## "2022-10-23 16:43:42 CEST"
 
 #Install R:
 #https://www.r-project.org/
-
 
 # Basic operations: +,-,*,/
 5 * 5
@@ -31,59 +29,46 @@ print("Hello world")
 #Do not forget the quotation marks ("" or '') to print a string
 print(Hello)
 
-## #The getwd() function returns the current working directory
-## getwd()
+#The getwd() function returns the current working directory
+getwd()
 
-knitr::include_graphics('images/Fig24.png')
 
-## #Windows
-## setwd("C:/Users/edgar/R/Scripts")
-## #Mac
-## setwd("~/R/Scripts/")
+#Windows
+#setwd("C:/Users/edgar/R/Scripts")
+#Mac
+#setwd("~/R/Scripts/")
 
 ## #Copy and run the following code to generate a bar plot!
 barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
 
 
-## #Install a package with install.packages("name")
-## #Caution: The package name needs to be enclosed in quotation marks!
-## install.packages("palmerpenguins")
-## install.packages("tidyverse")
-## #>Try URL 'https://cran.rstudio.com/bin/4.0/palmerpenguins_0.1.0.tgz'
-## #>Content type 'application/x-gzip' length 3001738 bytes (2.9 MB)
-## #>==================================================
-## #>downloaded 2.9 MB
-##
-## #>The downloaded binary packages are in
-## #>	/var/folders/0v/T//Rtmp4z29rO/downloaded_packages
-##
+#Install a package with install.packages("name")
+#Caution: The package name needs to be enclosed in quotation marks!
+#install.packages("palmerpenguins")
+#install.packages("tidyverse")
 
-#Remember: Package need to be installed only once.
-#But: Load a package each time you start a new R session!
 library(palmerpenguins)
+library(tidyverse)
+
 
 ## #The devtools package let you install packages from GitHub
 ## install.packages("devtools")
 
 ## #Install the PracticeR package
-## devtools::install_GitHub("edgar-treischl/PracticeR")
-##
+#devtools::install_github("edgar-treischl/PracticeR")
 
-knitr::include_graphics('images/Fig26.png')
-
-## #Load a chapter script with show_script()
-## library(PracticeR)
-## show_script("chapter02")
+#Load a chapter script with show_script()
+library(PracticeR)
+show_script("chapter02")
 
 #Show_link opens a browser with the link
-library(PracticeR)
 show_link("pr_website", browse = FALSE)
 
-## #Ask for help
-## ?barplot
-## #Search for keywords within the help files
-## help.search("keywords")
-##
+#Ask for help
+#?barplot
+#Search for keywords within the help files
+#help.search("keywords")
+
 
 ## # 2.2 Base R ###################################################################
 
@@ -95,9 +80,9 @@ result
 (result <- "Hello from the other side!")
 
 
-## #Everything is an object, for example, a bar plot:
-## my_plot <- barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
-##
+#Everything is an object, for example, a bar plot:
+my_plot <- barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
+
 
 #ABC of the assignment operator
 a <- 5
@@ -158,11 +143,10 @@ rep(1:2, times=5)
 #Repeat each element five times
 rep(1:2, each=5)
 
-## #The basic structure of a non-functioning function:
-##
-## my_fun <- function(x){
-## #  build the sum of x, divided by n
-##   }
+#The basic structure of a non-functioning function:
+# my_fun <- function(x){
+#  build the sum of x, divided by n
+#   }
 
 #1. The input
 data <- c(3, 2, 1, 5, 8, 12, 1)
@@ -220,7 +204,7 @@ tribble(
 data.frame(a = 1:6, b = 1:3, c = 1:2)
 
 #Tibbles do not recycle vectors, unless ...
-tibble(a = 1:6, b = 1:3, c = 1:2)
+#tibble(a = 1:6, b = 1:3, c = 1:2)
 
 #A list may combine heterogeneous input
 my_list <- list("numbers" = 1:10,
@@ -289,9 +273,9 @@ nrow(adelie_df)
 #Number of columns
 ncol(adelie_df)
 
-## #The dplyr::filter function
-## library(dplyr)
-## adelie_df <- filter(penguins, species == "Adelie")
-##
+#The dplyr::filter function
+library(dplyr)
+filter(penguins, species == "Adelie")
 
-Sys.time()
+
+

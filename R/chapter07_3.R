@@ -1,32 +1,6 @@
-
-
-library(tidyverse)
-
-library(PracticeR)
-
-
-
-#include DG Fonts with showtext
-library(showtext)
-
-#font_add("DGMetaScience", #"C:/Users/gu99mywo/AppData/Local/Microsoft/Windows/Fonts/DGMetaScience-Regular.otf")
-
-#showtext_auto()
-
-
-#data###
-
-
 ## # 7.3 Ggplot2 extensions #######################################################
 
-## #Get the minimal code script
-## PracticeR::show_script("ggplot_extensions")
-
-## # fig.cap = "\\label{1}An alluvial example"
-## titanic_alluvial()
-
-knitr::include_graphics('images/fig_731.pdf')
-
+#Alluvial########
 library(ggalluvial)
 #a wide data format is needed (see Chapter 11)
 titanic_wide_format <- data.frame(Titanic)
@@ -37,11 +11,7 @@ ggplot(data = titanic_wide_format,
   geom_stratum()
 
 
-## # fig.cap = "\\label{2}A beeswarm example"
-##
-## beeplot()
-
-knitr::include_graphics('images/fig_732.pdf')
+#Beeswarm#############
 
 library(titanic)
 library(ggbeeswarm)
@@ -49,12 +19,7 @@ library(ggbeeswarm)
 ggplot(titanic_train, aes(Survived, Age, color = Sex)) +
   geom_quasirandom(method = "quasirandom")
 
-
-## # fig.cap = "\\label{3}A choropleth example"
-## map_plot()
-##
-
-knitr::include_graphics('images/fig_733.pdf')
+#Choropleth maps######
 
 #Source: This example comes from the ggplot2 cheat sheet!
 map <- map_data("state")
@@ -66,10 +31,8 @@ ggplot(data, aes(fill = murder))+
   expand_limits(x = map$long, y = map$lat)
 
 
-## # fig.cap = "\\label{4}A dumbbell example"
-## dumbbell_plot()
 
-knitr::include_graphics('images/fig_734.pdf')
+#Dumbbell and lollipop charts#######
 
 library(ggcharts)
 data("popeurope")
@@ -79,19 +42,14 @@ dumbbell_chart(popeurope,
                y1 = pop1952, y2 = pop2007,
                top_n = 10)
 
-## # fig.cap = "\\label{5}A hex bin example"
-## hexbin_plot()
 
-knitr::include_graphics('images/fig_735.pdf')
+#Hexbin map############
+#There are many graphs (and code) to explore on:
+#www.r-graph-gallery.com
 
-## #There are many graphs (and code) to explore on:
-## #www.r-graph-gallery.com
 
-## # fig.cap = "\\label{6}A mosaic plot example"
-## mosaic_plot2()
 
-knitr::include_graphics('images/fig_736.pdf')
-
+#Mosaic plot######
 library(ggmosaic)
 
 ggplot(data = titanic) +
@@ -99,11 +57,8 @@ ggplot(data = titanic) +
                   fill = Survived))
 
 
-## # fig.cap = "\\label{7}A ridge plot example"
-## ridge_plot()
 
-knitr::include_graphics('images/fig_737.pdf')
-
+#Ridge plots#######
 library(ggridges)
 
 #minimal code by Claus Wilke:
@@ -114,17 +69,16 @@ ggplot(lincoln_weather,
   scale_fill_viridis_c(name = "Temp. [F]",
                        option = "C")
 
-## # fig.cap = "\\label{8}A treemap example"
-## tree_map()
-## #tree2()
 
-knitr::include_graphics('images/fig_738.pdf')
 
+#Treemaps######
+#FEHLER_ Missing dplyr
 library(treemapify)
 library(gapminder)
 
+
 data <- gapminder::gapminder |>
-  filter(year == 2007 & continent == "Europe")
+  dplyr::filter(year == 2007 & continent == "Europe")
 
 ggplot(data, aes(area = gdpPercap,
                  fill = lifeExp,
@@ -133,24 +87,21 @@ ggplot(data, aes(area = gdpPercap,
   geom_treemap_text(colour = "white",
                     grow = TRUE)
 
-## # fig.cap = "\\label{9}A waffle chart example"
-## waffle_plot()
 
-knitr::include_graphics('images/fig_739.pdf')
+#Waffle charts#####
 
 library(waffle)
 parts <- c(66, 22, 12)
 
 waffle(parts, rows = 10)
 
-## # fig.cap = "\\label{10}A word cloud example"
-## #wordle_plot()
-## alice_plot()
 
-knitr::include_graphics('images/fig_7310.pdf')
 
-## #Text Mining with R:
-## PracticeR::show_link("textmining")
+#Word clouds###########
+
+#Text Mining with R:
+library(PracticeR)
+show_link("textmining", browse = F)
 
 ## #Minimal code by Erwan Le Pennec
 library(ggwordcloud)
@@ -163,16 +114,15 @@ ggplot(love_words_small, aes(label = word,
   scale_size_area(max_size = 30)
 
 #R Graphics Cookbook
-show_link("r_graphics")
-##
-## #ggplot2: elegant graphics
-## show_link("ggplot2")
+show_link("r_graphics", browse=F)
 
-## #Fundamentals of Data Visualization
-## show_link("fundamentals_dataviz")
-##
-## #Data Visualization
-## show_link("dataviz")
+#ggplot2: elegant graphics
+show_link("ggplot2", browse=F)
 
-Sys.time()
+#Fundamentals of Data Visualization
+show_link("fundamentals_dataviz", browse=F)
+
+#Data Visualization
+show_link("dataviz", browse=F)
+
 

@@ -1,18 +1,15 @@
-
-
-
 #Chapter 4 needs the following packages #####
+#Last check: "2022-10-23 17:26:17 CEST"
+
 library(dplyr)
-library(tidyverse)
 library(magrittr)
+library(PracticeR)
 library(tidyr)
 library(tibble)
-library(socviz)
-library(PracticeR)
+library(usethis)
 
 ## # 4.1 The five key functions of dplyr ##########################################
-
-
+#Create a copy of the original mtcars data (for a later step)
 mtcars_df <- mtcars
 #The mtcars data set
 mtcars <- tibble::as_tibble(mtcars)
@@ -114,20 +111,7 @@ mtcars |>
 ## # 4.2 Data manipulation with dplyr #############################################
 
 #The gssm2016 data
-library(PracticeR)
 head(gssm2016)
-
-## library(essurvey)
-## #Set your email address to get access
-## set_email("your@email.com")
-##
-## #Import the eight round for Germany
-## germany <- import_country(
-##   country = "Germany",
-##   rounds = c(8)
-##   )
-##
-## show_link("tidy_tuesday", browse = F )
 
 #First attempts ...
 gssm2016 |>
@@ -275,13 +259,10 @@ summarize(mtcars, across(everything(), mean))
 head(mtcars_df)
 
 ## #Augment your dplyr skills with further packages
-mtcars |>
-  tibble::rownames_to_column(var = "car") |>
-  head()
-
 mtcars_df |>
   tibble::rownames_to_column(var = "car") |>
   head()
+
 
 mtcars |>
   select(mpg)|>
@@ -311,9 +292,9 @@ sapply(df, mean)
 #Comments, comments comments!
 #Add useful comments that describe what the code does
 
-## #Pro tip
-## #Turn multiple lines into comments and back again:
-## #Press: Ctrl/Cmd + Shift + C
+#Pro tip
+#Turn multiple lines into comments and back again:
+#Press: Ctrl/Cmd + Shift + C
 
 ## #00 About ####
 ## #01 Packages ####
@@ -322,9 +303,6 @@ sapply(df, mean)
 ## #04 Visualization ####
 ## #05 Further ado ####
 
-knitr::include_graphics('images/Fig42.png')
-
-knitr::include_graphics('images/Fig43.png')
 
 #https://style.tidyverse.org/
 
@@ -345,46 +323,45 @@ df <-
     min = min(hp)
   )
 
-## #Set the working directory
-## setwd("/Users/edgar/my_scripts/")
-## #Import data
-## df <- read_csv("my_data.csv")
+#Set the working directory
+#setwd("/Users/edgar/my_scripts/")
+#Import data
+#df <- read_csv("my_data.csv")
 
-knitr::include_graphics('images/Fig44.png')
 
-## #A simple histogram
-## hist(data$x)
+#A simple histogram
+#hist(data$x)
 
-## # A histogram with adjusted options
-## hist(mpg,
-##      main="My title",
-##      xlab="The x label",
-##      col="darkgray",
-##      freq=FALSE
-## )
+# # A histogram with adjusted options
+# hist(mpg,
+#      main="My title",
+#      xlab="The x label",
+#      col="darkgray",
+#      freq=FALSE
+# )
 
-## #Insert fun and press Tab to insert the function snippet
-## name <- function(variables) {
-##
-## }
+#Insert fun and press Tab to insert the function snippet
+# name <- function(variables) {
+#
+# }
 
-## #Use edit_rstudio_snippets() to edit your snippets directly
-## usethis::edit_rstudio_snippets()
+#Use edit_rstudio_snippets() to edit your snippets directly
+#usethis::edit_rstudio_snippets()
+
+
 
 ## snippet fun
 ## 	${1:name} <- function(${2:variables}) {
 ## 		${0}
 ## 	}
 
-knitr::include_graphics('images/Fig47.png')
 
 #The dplyr website
 show_link("dplyr", browse = FALSE)
-
 #What They Forgot to Teach You About R:
 show_link("forgot_teach", browse = FALSE)
 #R for Data Science
 show_link("r4ds", browse = FALSE)
 
 
-Sys.time()
+

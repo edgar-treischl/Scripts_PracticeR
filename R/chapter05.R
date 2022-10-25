@@ -1,33 +1,32 @@
-
-
-
 #The setup of Chapter 5 #####
+#Last Update: "2022-10-23 19:20:46 CEST"
+
 library(dplyr)
+library(forcats)
 library(janitor)
 library(naniar)
-library(forcats)
-library(tibble)
 library(readr)
+library(tibble)
 library(tidyr)
 
 
 ## # 5.1 Data import and export ####################################################
 
-## #The readr package reads txt/csv files
-## library(readr)
-## #Import a csv file
-## my_data <- read_csv("path_to_the_file/data.csv")
+#The readr package reads txt/csv files
+library(readr)
+#Import a csv file
+#my_data <- read_csv("path_to_the_file/data.csv")
 
-## #The haven package reads SPSS/Stata files
-## haven::read_stata("my_stata.dta")
+#The haven package reads SPSS/Stata files
+#haven::read_stata("my_stata.dta")
 
 
-## #Copy the code to import data from the code preview
-## overweight_world <- read_csv("~/data/overweight_world.csv")
-## View(overweight_world)
+#Copy the code to import data from the code preview
+#overweight_world <- read_csv("~/data/overweight_world.csv")
+#View(overweight_world)
 
-## #Export data
-## write_csv(my_new_data, "my_new_data.csv")
+#Export data
+#write_csv(my_new_data, "my_new_data.csv")
 
 #A messy variable
 x <- c("9", 9, 9, 2, 3, 1, 2)
@@ -38,36 +37,37 @@ x <- as.numeric(x)
 class(x)
 
 #A real example, what a mess!
-overweight_world <- read_csv("data/overweight_world.csv")
-head(overweight_world)
+#overweight_world <- read_csv("data/overweight_world.csv")
+#head(overweight_world)
 
 #Inspect the column specification
-spec(overweight_world)
+#spec(overweight_world)
 
 #Guess_parser reveals the parser to encode data
 guess_parser(c("Hello world"))
 guess_parser(c("2000,5", "2005,44", "2010,3"))
 guess_parser(c("TRUE", "FALSE"))
 
-## #Adjust the column specification if it is necessary
-## overweight_world <- read_csv("data/overweight_world.csv",
-##     col_types = cols(code = col_skip(),
-##                     `2016` = col_integer())
-##     )
+#Adjust the column specification if it is necessary
+# overweight_world <- read_csv("data/overweight_world.csv",
+#     col_types = cols(code = col_skip(),
+#                     `2016` = col_integer())
+#     )
 
-## #Refer to NA indicators with the na option
-## read_excel("data.xlsx",
-##            na = "99")
+#Refer to NA indicators with the na option
+#read_excel("data.xlsx",
+#           na = "99")
 
-## #This code returns an error:
-## data.frame(
-##   measurement 1 = 1,
-##   2016 = 1)
-##
-## #> Error: unexpected numeric constant in:
-## #> "data.frame(
-## #>  measurement 1"
-## #> Error: unexpected ')' in "  2016 = 2)"
+#FEHLER# (code has changed rerun)
+# #This code returns an error:
+# data.frame(
+#   measurement 1 = 1,
+#   2016 = 1)
+
+#> Error: unexpected numeric constant in:
+#> "data.frame(
+#>  measurement 1"
+#> Error: unexpected ')' in "  2016 = 2)"
 
 #Insert backticks
 data.frame(
@@ -82,30 +82,30 @@ tibble(
 )
 
 #Is x a tibble?
-tibble::is_tibble(overweight_world)
-
-iris <- as_tibble(iris)
+#tibble::is_tibble(data)
 
 #The iris data
+iris <- as_tibble(iris)
 names(iris)
 
-## #snake_case
-## my_var <- 1
-##
-## #SCREAMING_SNAKE_CASE
-## MY_VAR <- 1
-##
-## #camelCase
-## myVar <- 1
-##
-## #Upper_Camel
-## MyVar <- 1
-##
-## #kebab-case (hmm-mmmm)
-## my-var <- 1
+#snake_case
+# my_var <- 1
+#
+#SCREAMING_SNAKE_CASE
+# MY_VAR <- 1
+#
+#camelCase
+# myVar <- 1
+#
+#Upper_Camel
+# MyVar <- 1
+#
+#kebab-case (hmm-mmmm)
+# my-var <- 1
 
-## #Rename variable: new_name = variable
-## dplyr::rename(df, sepal_length = Sepal.Length)
+#FEHLER change df in data
+#Rename variable: new_name = variable
+#dplyr::rename(df, sepal_length = Sepal.Length)
 
 #Include rename() in select
 iris |>
@@ -127,8 +127,8 @@ messy_data <- data.frame(firstName   = 1:2,
 names(messy_data)
 
 #Tibble checks duplicates and warns us
-tibble(measurement = 1:2,
-       measurement = 1:2)
+# tibble(measurement = 1:2,
+#        measurement = 1:2)
 
 #Janitor gets rid of many crude names
 names(messy_data |> janitor::clean_names())
@@ -149,17 +149,6 @@ mean(x, na.rm = TRUE)
 x[x == 99] <- NA
 mean(x, na.rm=TRUE)
 
-rubin_simdata <- rubin_df()
-rubin_simdata <- rubin_simdata |>
-  select(income:education)
-
-## #The next console shows the `head()` of the simulated data.
-## #Summary of the simulated data
-## head(rubin_simdata)
-
-## rubin_missing()
-
-knitr::include_graphics('images/Fig502.pdf')
 
 #Tiny data with NAs
 df <- tribble(
@@ -178,8 +167,6 @@ sum(is.na(df$sex))
 which(is.na(df$sex))
 
 #naniar provides functions and graphs to explore missing values
-library(naniar)
-
 #n_miss counts number of missings
 n_miss(df)
 
@@ -200,8 +187,7 @@ df |>
 children <- c(1, 4, NA, 2, NA)
 coalesce(children, 0)
 
-#Drop (all) NAs
-library(tidyr)
+#Drop (all) NAs with tidyr
 df |>
   select(-c(age_child2, country)) |>
   drop_na()
@@ -224,16 +210,11 @@ df |> replace_na(list(sex = "Not available"))
 df |> replace_na(list(sex = "Not available"))|>
   mutate(age_missing = if_else(is.na(age), "Missing", "Not-missing") )
 
-## geom_miss_fun()
-
-knitr::include_graphics('images/Fig510.pdf')
 
 ## # 5.3 Categorical variables ####################################################
-
+#forcats == for categorical variables
 head(gss_cat)
 
-#forcats == for categorical variables
-library(forcats)
 #Count levels
 fct_count(gss_cat$marital)
 
@@ -279,4 +260,3 @@ f <- fct_lump(gss_cat$relig, n = 5)
 f <- fct_infreq(f)
 fct_count(f)
 
-Sys.time()

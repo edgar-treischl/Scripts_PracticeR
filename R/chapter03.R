@@ -1,18 +1,13 @@
-library(ggplot2)
-
-
-
-
-
 #Setup of Chapter 3 #####
 #Remember you can install packages via: install.packages("name")
 library(correlation)
 library(corrplot)
-library(GGally)
-library(summarytools)
 library(DataExplorer)
+library(effectsize)
+library(forcats)
 library(PracticeR)
-library(dplyr)
+library(summarytools)
+library(tibble)
 
 
 
@@ -29,8 +24,8 @@ head(df)
 #Last n elements
 tail(df, n = 3)
 
-## #View the entire data set
-## tibble::view(gssm5)
+#View the entire data set
+#tibble::view(gssm5)
 
 ## # 3.1 Categorical variables ####################################################
 
@@ -41,25 +36,15 @@ df$sex[1:5]
 table(df$sex)
 
 #A frequency table
-library(summarytools)
 freq(df$sex)
 
-## #Count sex
-## count_sex <- table(df$sex)
-## #Left plot
-## barplot(count_sex)
-##
-## #Right plot
-## #The bar plot with title and label adjustments
-## barplot(count_sex,
-##         main="Sex",
-##         ylab="Count")
-
+#Count sex
 count_sex <- table(df$sex)
-
-
-par(mfrow=c(1,2))
+#Left plot
 barplot(count_sex)
+
+#Right plot
+#The bar plot with title and label adjustments
 barplot(count_sex,
         main="Sex",
         ylab="Count")
@@ -67,38 +52,24 @@ barplot(count_sex,
 
 
 #Plot several bar graphs
-library(DataExplorer)
 plot_bar(df)
 
-## library(ggplot2)
-## library(ggblanket)
-##
-## #Left plot
-## gg_bar(df, x = sex)
-##
-## #Right plot
-## gg_histogram(df, x = age)
 
-## #DEL#############
-## library(ggplot2)
-## library(ggblanket)
-## library(patchwork)
-##
-## p1 <- df|>
-##   gg_bar(
-##     x = sex
-##   )
-##
-## p2 <- df|>
-##   gg_histogram(
-##     x = age
-##   )
-##
-## p1 + p2
-##
-## #What does ggblanket return?
-## my_plot <- gg_bar(df, x = sex)
-## class(my_plot)
+## ggblanket################
+library(ggplot2)
+library(ggblanket)
+
+#Left plot
+gg_bar(df, x = sex)
+
+#Right plot
+gg_histogram(df, x = age)
+
+#What does ggblanket return?
+my_plot <- gg_bar(df, x = sex)
+class(my_plot)
+## ggblanket################
+
 
 #Levels returns the levels of a factor variable
 levels(df$sex)
@@ -159,42 +130,34 @@ min(3, 5, 6, 8, NA)
 mean(df$age, na.rm = TRUE)
 
 #Summary statistics of one variable
-summary(gssm5$age)
+summary(df$age)
 
 #Summary statistics of the first four variables
 summary(df[1:4])
 
+
+#FEHLER? Sprachlich ändern?
 #The descr() function returns descriptive summary statistics
-library(summarytools)
 descr(gssm2016,
       stats = c("min", "mean", "sd", "max"),
       transpose = TRUE)
 
-## #Left plot
-## hist(df$age)
-##
-## #Right plot
-## hist(df$age,
-##      breaks = 6,
-##      freq=FALSE,
-##      main="Density",
-##      xlab = "Age",)
 
-par(mfrow=c(1,2))
+
+#Left plot
 hist(df$age)
+
+#Right plot
 hist(df$age,
      breaks = 6,
      freq=FALSE,
      main="Density",
-     xlab = "Age",)
+     xlab = "Age")
 
 
 #Plot several histograms
 DataExplorer::plot_histogram(df)
 
-## boxplot_illustration()
-
-knitr::include_graphics('images/Fig307.pdf')
 
 #Toy variable
 x <-  factor(c("Female", "Male"))
@@ -203,38 +166,38 @@ y <- c(3.11, 2.7)
 as.numeric(x)
 as.character(y)
 
-## #Income as numeric
-df$income <- as.numeric(gssm2016$income16)
-##
-## #Left plot
-## boxplot(df$income,
-##         horizontal = TRUE)
-##
-## #Right plot
-## boxplot(income~sex,
-##         data=df)
-##
+#Income as numeric
+df$income <- as.numeric(gssm5$income16)
 
-par(mfrow=c(1,2))
+#Left plot
 boxplot(df$income,
         horizontal = TRUE)
+
+#Right plot
 boxplot(income~sex,
         data=df)
 
-## #Create a data report
-## library(DataExplorer)
-## create_report(data,
-##               output_file = "my_report.pdf",
-##               output_format = "pdf_document")
+
+
+#Create a data report
+# library(DataExplorer)
+# create_report(data,
+#               output_file = "my_report.pdf",
+#               output_format = "pdf_document")
 
 ## # 3.3 Explore effects ##########################################################
 
-levels(df$happy)
+##FEHLER? Sprachlich ändern?
+#DELETE HERE or Rewrite
+levels(gssm2016$happy)
 
 #Collapse level of a factor variable with fct_collapse
-df$happy <- forcats::fct_collapse(df$happy,
+x<- forcats::fct_collapse(gssm2016$happy,
                                Happy = c("Pretty Happy", "Very Happy"))
-levels(df$happy)
+levels(x)
+##FEHLER? Sprachlich ändern?
+
+
 
 #A simple table
 table(df$sex, df$happy)
@@ -248,6 +211,7 @@ summarytools::ctable(x = df$sex,
 spineplot(happy ~ sex,
           data = df)
 
+df$income16
 
 #Create a scatter plot
 plot(y = df$income, x = df$age,
@@ -262,16 +226,14 @@ cor_value <- cor(df$income, df$age, use = "complete")
 cor_value
 
 #The effect size package interprets r
-library(effectsize)
 interpret_r(cor_value, rules = "cohen1988")
 
 #The correlation function from the correlation package
-library(correlation)
 results <- correlation(mtcars[1:5])
 results
 
 #A correlation plot example
-library(corrplot)
+
 corr_matrix <- cor(mtcars)
 
 #Left plot
@@ -289,6 +251,5 @@ corrplot(corr_matrix,
          diag=FALSE,
          addCoef.col ='black', number.cex = 0.8, tl.col = 'black')
 
-knitr::include_graphics('images/Fig312.pdf')
 
-Sys.time()
+
