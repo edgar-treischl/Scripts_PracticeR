@@ -1,13 +1,14 @@
 ## # 2.1 Introducing R and RStudio ################################################
-## "2022-10-23 16:43:42 CEST"
 
 #Install R:
 #https://www.r-project.org/
 
-# Basic operations: +,-,*,/
-5 * 5
+
+
+# Basic operations: +,-,*,/ 
+5 * 5 
 #Powers
-3^2
+3^2              
 #Square root
 sqrt(16)
 #Logarithm (base: Euler's number e)
@@ -19,58 +20,80 @@ exp(1)
 print("Hello world")
 
 #Install RStudio (from Posit):
-#https://rstudio.com/
+#https://posit.co/downloads/
+
 
 
 #Run code via the shortcut (Windows/Mac):
 #Press: <Ctlr/Cmd> + <Enter>
 
 
+
 #Do not forget the quotation marks ("" or '') to print a string
 print(Hello)
 
-#The getwd() function returns the current working directory
-getwd()
+## #The getwd() function returns the current working directory
+## getwd()
+## #> [1] "C:/Users/Edgar/R/Practice_R"
 
 
-#Windows
-#setwd("C:/Users/edgar/R/Scripts")
-#Mac
-#setwd("~/R/Scripts/")
+
+## #Windows
+## setwd("C:/Users/Edgar/R/Scripts")
+## #Mac
+## setwd("~/R/Scripts/")
 
 ## #Copy and run the following code to generate a bar plot!
-barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
+## barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
 
 
-#Install a package with install.packages("name")
-#Caution: The package name needs to be enclosed in quotation marks!
-#install.packages("palmerpenguins")
-#install.packages("tidyverse")
 
+#Install a package with:
+#install.packages("name")
+#Caution: The package name needs to be enclosed in quotation marks
+
+
+
+#Remember: Package need to be installed only once.
+#But: Load a package each time you start a new R session!
 library(palmerpenguins)
-library(tidyverse)
 
 
-## #The devtools package let you install packages from GitHub
-## install.packages("devtools")
+
+
 
 ## #Install the PracticeR package
-#devtools::install_github("edgar-treischl/PracticeR")
+## devtools::install_github("edgar-treischl/PracticeR")
+## 
 
-#Load a chapter script with show_script()
-library(PracticeR)
-show_script("chapter02")
+
+
+## #Load a chapter script with show_script()
+## library(PracticeR)
+## show_script("chapter02")
 
 #Show_link opens a browser with the link
 show_link("pr_website", browse = FALSE)
 
-#Ask for help
-#?barplot
-#Search for keywords within the help files
-#help.search("keywords")
+## #Run examples from the online help (press ESC to abort)
+## example(barplot)
 
+## #Ask for help
+## ?barplot
+## #Search for keywords within the help files
+## help.search("keywords")
+## 
 
-## # 2.2 Base R ###################################################################
+## # Infobox: Vignettes and Rstudio’s Addins ######################################
+## #Browse vignettes from a package:
+## browseVignettes("dplyr")
+## #Inspect a vignette in the viewer by calling its name:
+## vignette("dplyr")
+## #Edit the code from a vignette:
+## edit(vignette("dplyr"))
+## # Infobox: Vignettes and Rstudio’s Addins ######################################
+
+# 2.2 Base R ###################################################################
 
 #The object result refers to 5*5
 result <- 5*5
@@ -78,10 +101,6 @@ result
 
 #R does not print the results of the assignment
 (result <- "Hello from the other side!")
-
-
-#Everything is an object, for example, a bar plot:
-my_plot <- barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
 
 
 #ABC of the assignment operator
@@ -105,10 +124,10 @@ a == b
 #Is a not equal to (!=) b
 a != b
 
-# Assign like a Pro, press:
-# <Alt> + <-> (Windows)
-# <Option> + <-> (Unix/Mac)
-# The assignment operator will appear out of nothing
+#Assign like a Pro, press: 
+#<Alt> + <-> (Windows)
+#<Option> + <-> (Unix/Mac)
+#The assignment operator will appear out of nothing
 
 #Keep in mind: No numbers
 make.names(names="1.wave")
@@ -119,8 +138,8 @@ make.names(names="income_$")
 #Try to be specific and provide a descriptive name
 make.names(names="an_object_should_describe_its_content")
 
-# RStudio suggests also the input of a function (e.g. object name)
-# Give it a try and press <TAB> within the brackets of a function
+#RStudio suggests also the input of a function (e.g. object name)
+#Give it a try and press <TAB> within the brackets of a function
 print("Hello", quote = FALSE)
 
 #Combine function
@@ -128,7 +147,7 @@ running_number <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 running_number
 
 #Set a start and endpoint
-running_number <- c(1:10)
+running_number <- c(1:10) 
 running_number
 
 #The sequence function
@@ -143,10 +162,11 @@ rep(1:2, times=5)
 #Repeat each element five times
 rep(1:2, each=5)
 
-#The basic structure of a non-functioning function:
-# my_fun <- function(x){
-#  build the sum of x, divided by n
-#   }
+## #The basic structure of a non-functioning function:
+## 
+## my_fun <- function(x){
+## #  build the sum of x, divided by n
+##   }
 
 #1. The input
 data <- c(3, 2, 1, 5, 8, 12, 1)
@@ -165,7 +185,6 @@ sum(c(1,2,3))
 #Count the length
 length(c(1,2,3))
 
-
 #The mean_function
 mean_function <- function(data){
   mean <- sum(data)/length(data) #save and create mean
@@ -177,7 +196,7 @@ mean_function(data)
 #The "real" mean
 round(mean(data), digits = 2)
 
-## # 2.3 Data types and structures# ###############################################
+# 2.3 Data types and structures# ###############################################
 
 #Create two vectors of identical length
 x<- c(1, 2, 3, 4)
@@ -189,7 +208,7 @@ df
 
 #Create a tibble
 library(tidyr)
-tibble(x = c(1, 2, 3, 4),
+tibble(x = c(1, 2, 3, 4), 
        y = c("a", "a", "a", "a"))
 
 
@@ -200,15 +219,15 @@ tribble(
   "Women", 22.7, "1981-01-06"
 )
 
-#Rgh, R recycles vectors
+#R recycles vectors
 data.frame(a = 1:6, b = 1:3, c = 1:2)
 
-#Tibbles do not recycle vectors, unless ...
-#tibble(a = 1:6, b = 1:3, c = 1:2)
+#A tibble does not recycle vectors, unless ...
+tibble(a = 1:6, b = 1:3, c = 1:2)
 
 #A list may combine heterogeneous input
-my_list <- list("numbers" = 1:10,
-                "letters" = LETTERS[1:3],
+my_list <- list("numbers" = 1:10, 
+                "letters" = letters[1:3], 
                 "names" = c("Bruno", "Justin", "Miley", "Ariana") )
 my_list
 
@@ -273,9 +292,7 @@ nrow(adelie_df)
 #Number of columns
 ncol(adelie_df)
 
-#The dplyr::filter function
-library(dplyr)
-filter(penguins, species == "Adelie")
-
-
-
+## #The dplyr::filter function
+## library(dplyr)
+## adelie_df <- filter(penguins, species == "Adelie")
+## 

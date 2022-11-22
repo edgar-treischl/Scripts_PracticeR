@@ -1,46 +1,20 @@
-
-library(rvest)
-
-pr_site <- "website_PR.html"
-pr_html <- read_html(pr_site)
-raw_text <- readRDS(file = "raw_text.rds")
-#unemployment <- readRDS(file = "unemployment.rds")
-
-source("utils.R")
-Sys.setenv(LANG = "en")
-
-
-options(tibble.print_max = 25, tibble.print_min = 5)
-
-knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path='images/', cache = TRUE,
-                      echo=TRUE, warning=FALSE, message=FALSE, eval=TRUE)
-
-knitr::opts_chunk$set(
-  fig.process = function(filename) {
-    new_filename <- stringr::str_remove(string = filename,
-                                        pattern = "-1")
-    fs::file_move(path = filename, new_path = new_filename)
-    ifelse(fs::file_exists(new_filename), new_filename, filename)
-  }
-)
-
-
+# 11 Collect data ##############################################################
 
 #Set the engine for chapter 11 #####
+library(DemografixeR)
+library(dplyr)
+library(gapminder)
+library(httr)
+library(pdftools)
+library(purrr)
+library(PracticeR)
+library(rvest)
 library(stringr)
 library(stringi)
-library(pdftools)
-library(dplyr)
-library(rvest)
-library(DemografixeR)
-library(httr)
-library(purrr)
-library(clipr)
+library(tibble)
 library(tidyr)
-library(gapminder)
-library(PracticeR)
 
-## # 11.1 PDF Files################################################################
+# 11.1 PDF Files################################################################
 
 #Example strings
 library(stringr)
@@ -56,7 +30,7 @@ str_extract(strings, pattern)
 #Subset a string
 str_subset(strings, pattern)
 
-#Regular expressions help to extract a string
+#Extract a string with regular expressions
 str_extract(strings, "\\w")
 str_extract(strings, "\\d")
 
@@ -66,16 +40,16 @@ str_extract(strings, "\\d\\d\\d\\d")
 # A + indicate if a character appears one or more times
 str_extract(strings, "\\d+")
 
-# A ? matches a character 0 or 1 times
+#Does a character appear? A ? matches a character 0 or 1 times
 x <- c("Haïti", "Haiti", "Honduras")
 str_extract(x, "Ha\\ï?i?ti")
 
 
-# A * matches a character 0 or more times
+#How often does it appear? A * matches a character 0 or more times
 x <- c("9", "99", "981")
 str_extract(x, "9\\d*")
 
-# A . matches any single character, e.g., to extract the username
+# A . matches any single character, e.g., to extract the usernames
 x <- c("edgar-doe@test.com", "jane.doe@test.com")
 str_extract(x, "\\w+.\\w+")
 
@@ -101,15 +75,15 @@ str_extract(strings, "\\w+.")
 ## #Use a character class for vocals
 ## str_view_all(strings, "[aeiou]")
 
-knitr::include_graphics('images/Fig_1101.png')
+
 
 #[:alpha:] == letters
 str_extract(strings, "[:alpha:]+")
 #[:digit:] == digits
 str_extract(strings, "[:digit:]+")
 
-#example strings
-string <- c("123", "abc", "ABC", ",?()")
+#Example string
+string <- c("abc", "ABC", ",?()", "123")
 
 #lowercase
 str_extract(string, "[:lower:]+")
@@ -125,6 +99,7 @@ strings <- c("Tom is born on 29 May 2000.",
 
 #Create a range with -
 str_extract(strings, "[0-9]")
+str_extract(strings, "[:digit:]")
 
 #Use a quantifier {}: exactly 1 (or n) times
 str_extract(strings, "[0-9]{1}")
@@ -135,7 +110,6 @@ str_extract(strings, "[0-9]{1,2}")
 
 #Regex are case sensitive: [A-Z] for upper, [a-z] for lowercase 
 str_extract(strings, "[0-9]{1,2} [A-Z][a-z]+")
-str_extract(strings, "[:digit:]{1,2} [:upper:][:lower:]+")
 
 
 #Extract and save the dates:
@@ -156,7 +130,7 @@ name <- str_extract(strings, "^[A-Z][a-z]+")
 df <- data.frame(name, day, month, year)
 df
 
-## ## The `stringr` package########################################################
+## The stringr package##########################################################
 
 #str_split_fixed splits the string
 dates |> 
@@ -170,7 +144,7 @@ years_str <- c("2000", "1999")
 #str_c combines strings (sep adds an string seperator)
 str_c(days_str, month_str, years_str, sep = " ")
 
-#Check if the code does what it supposed to do with fruits:
+#Some fruits?
 head(fruit)
 #Or sentences: 
 head(sentences)
@@ -194,27 +168,34 @@ str_replace(fruits, "a", "8")
 str_replace_all(fruits, "a", "8")
 
 #Lengths of strings
+fruits <- c("banana", "apricot", "apple", "pear")
 str_length(fruits)
 
 #Sort strings
-fruits <- c("banana", "apricot", "apple", "pear")
 str_sort(fruits, decreasing = FALSE)
 
-## head(PracticeR::unemployment)
+#The unemployment data
+head(PracticeR::unemployment)
 
 #System.file returns the path of system files
-oecd_table <- system.file("pdfs", "oecd_table.pdf", package = "PracticeR")
+oecd_table <- system.file("pdfs", 
+                          "oecd_table.pdf", 
+                          package = "PracticeR")
 
 #Read the content of a pdf file via pdf_text
 raw_text <- pdftools::pdf_text(oecd_table)
 
-## #str_split splits the raw text after each new line
-## text <- str_split(raw_text, "\n")
-## text <- as_vector(text)
-## head(text)
+#str_split splits the raw text after each new line
+text <- str_split(raw_text, "\n")
+text <- as_vector(text)
+head(text)
 
-## #Inspect for irregularities
-## text[17:18]
+
+
+#Inspect for irregularities
+text[17:18]
+
+
 
 #Replace extra lines and |
 text <- str_replace_all(raw_text, pattern = "\\|\n", "")
@@ -228,51 +209,48 @@ text <- as_vector(text)
 str_which(text, "Australia")
 str_which(text, "United States")
 
+#Use the position to extract the data
 start <- str_which(text, "Australia")
 end <- str_which(text, "United States")
+#Slice the data from the start to the end
 text_df <- text[start:end]
+head(text_df)
 
-## #Use the position to extract the data
-## start <- str_which(text, "Australia")
-## end <- str_which(text, "United States")
-## #Slice the data from the start to the end
-## text_df <- text[start:end]
-## head(text_df)
 
+
+#Discard
 text_df <- str_replace_all(text_df, ":", "")
+#Trim blank spaces
 text_df <- str_trim(text_df)
+#Keep everything that is not (!=) empty
 text_df <- text_df[text_df != ""]
+head(text_df)
 
-## #Discard :
-## text_df <- str_replace_all(text_df, ":", "")
-## #Trim blank spaces
-## text_df <- str_trim(text_df)
-## #Keep everything that is not (!=) empty
-## text_df <- text_df[text_df != ""]
-## head(text_df)
+
 
 #Split vector
 text_split <- str_split_fixed(text_df, " {2,}", n = 11)
+#Create data
 df <- tibble::as_tibble(text_split)
 head(df)
 
-#Create a name vector
+#Create a vector
 colum_names <- c("country", seq(2011, 2020, by = 1))
 #For the column names
 names(df) <- colum_names
 head(df)
 
-#The strings still include footnotes
+#The strings include footnotes
 str_subset(df$`2020`, "e")
 #str_remove_all removes characters, here footnote signs
 df$`2020`<- str_remove_all(df$`2020`, "[:alpha:]")
 
-#Which country with the highest unemployment rates?
+#Which country has the highest unemployment rates?
 df |>
   select(country, `2020`)|>
   slice_min(order_by = `2020`, n = 5)
 
-#Don't forget that we imported characters from a PDF ...
+#Don't forget that we imported characters from a PDF!
 df$`2020` <- as.numeric(df$`2020`)
 
 df |>
@@ -280,29 +258,53 @@ df |>
   slice_min(order_by = `2020`, n = 5)
 
 
-## # 11.2 Web scraping#############################################################
+#SQL info box #######################
+#Establish a connection to the local memory
+library(DBI)
 
-## #The PR website has a webscraping page:
-## show_link("webscraping", browse = FALSE)
+con_myDB <- dbConnect(drv = RSQLite::SQLite(), dbname = ":memory:")
 
-knitr::include_graphics('images/Fig_1102.png')
+#write a table into the database
+dbWriteTable(conn = con_myDB, 
+             name = "mtcars", 
+             value = mtcars)
 
-## #Get the website
-## library(rvest)
-## pr_site <- show_link("webscraping", browse = FALSE)
-## 
-## #read_html reads the website
-## pr_html <- read_html(pr_site)
+#list all tables
+dbListTables(con_myDB)
 
-## #Body node with all children
-## pr_html |>
-##   html_node("body") |>
-##   html_children()
 
-#Extract elements
+#Get SQL Queries
+dbGetQuery(con_myDB, 'SELECT mpg FROM mtcars LIMIT 3;')
+#Disconnect after the job is finished
+dbDisconnect(con_myDB)
+
+
+# 11.2 Web scraping#############################################################
+
+#The PR website has a web scraping page:
+show_link("webscraping", browse = F)
+#> [1] "https://edgar-treischl.github.io/PracticeR/articles/web_only/
+#> webscraping.html"
+
+
+
+#Get the website
+library(rvest)
+pr_site <- show_link("webscraping", browse = FALSE)
+
+#read_html reads the website
+pr_html <- read_html(pr_site)
+
+#Body node with all children
+pr_html |> 
+  html_node("body") |> 
+  html_children()
+
+#Extract elements h1
 pr_html |> html_elements("h1")
 
-## pr_html |> html_elements("p")
+#Extract elements p
+pr_html |> html_elements("p")
 
 #A minimal html website
 html <- minimal_html(
@@ -334,8 +336,8 @@ stringr::str_extract(txt, "[0-9]+")
 #Get tables
 pr_html |> 
   html_element("table") |> 
-  html_table()|>
-  head()
+  html_table()
+
 
 #Get elements with attributes
 pr_html |> 
@@ -343,61 +345,14 @@ pr_html |>
   html_attr("href") |>
   head()
 
-## <!-- All <p> elements get a black text color -->
-
-## <head>
-
-## <link rel="stylesheet" href="CSS_File.css">
-
-## </head>
-
-## <body>
-
-##    <h1>My Blog</h1>
-
-##       <p>This is my first paragraph.</p>
-
-##       <p class="alert">This is an important paragraph.</p>
-
-##       <p id="unique">This is a unique paragraph.</p>
-
-## </body>
 
 
-## <!-- All <p> elements get a red text color -->
-
-## p {
-
-##   color: red;
-
-## }
 
 
-## <!-- Elements with the class (.) = "alert" will be red  -->
-
-## .alert {
-
-##   color: red;
-
-## }
 
 
-## <!-- All p elements with the class (.) = "alert" will be red  -->
-
-## p.alert {
-
-##   color: red;
-
-## }
 
 
-## <!-- Apply rules uniquely with id attributes:  -->
-
-## #title {
-
-##   color: red;
-
-## }
 
 
 #Get class via .
@@ -408,21 +363,22 @@ pr_html |>
   html_elements("#table2") |>
   html_table()
 
-## #The genderize API
-## library(DemografixeR)
-## names <- c('Edgar', 'James', 'Veronica', 'Marta', 'Fritz')
-## genderize(names, simplify = FALSE)
+
+
+
 
 #Inspect the API via the browser:
 #https://api.genderize.io/?name=edgar
 #My browser returns:
 
-## PracticeR::show_script()
+## The httr package ############################################################
+
+PracticeR::show_script()
 
 #Inspect the GitHub API
 #https://api.github.com/
 
-knitr::include_graphics('images/Fig_1103.png')
+
 
 gitlink <- "https://api.github.com/search/code?q=repo:"
 
@@ -434,83 +390,77 @@ git_url <- paste0(gitlink,
                   repository, "/", 
                   "+extension:R")
 
-## #Build the link for the API
-## gitlink <- "https://api.github.com/search/code?q=repo:"
-## 
-## author <- "edgar-treischl"
-## repository <- "Scripts_PracticeR"
-## 
-## git_url <- paste0(gitlink,
-##                   author, "/",
-##                   repository, "/",
-##                   "+extension:R")
-## 
-## git_url
+git_url
 
+
+
+#GET a response from the Github API
 response <- httr::GET(git_url)
+response
 
-## #GET a response from the Github API
-## response <- httr::GET(git_url)
-## response
+
 
 #Parse the content
-response_parsed <- httr::content(response, as="parsed") 
+response_parsed <- httr::content(response, as = "parsed") 
 class(response_parsed)
 
 #Prepare data
 parsed_tree <- response_parsed$items
 df <- dplyr::bind_rows(parsed_tree)
-
-## parsed_tree <- response_parsed$items
-## df <- dplyr::bind_rows(parsed_tree)
-## df
+df
 
 #stringi::stri_unique returns unique strings
 git_scripts <- stringi::stri_unique(df$name)
 head(git_scripts)
 
-#A test run for my_ghscripts
+#Gitfunction
+which_gitscripts <- function(repository) {
+  author <- "edgar-treischl"
+  
+  git_url <- paste0("https://api.github.com/search/code?q=repo:", 
+                    author, "/", 
+                    repository, "/", 
+                    "+extension:R")
+  
+  response <- httr::GET(git_url)
+  
+  response_parsed <- httr::content(response, as="parsed") 
+  
+  parsed_tree <- response_parsed$items
+  df <- dplyr::bind_rows(parsed_tree)
+  
+  git_scripts <- df$name
+  git_scripts_unique <- stringi::stri_unique(git_scripts)
+  git_scripts_unique
+  
+}
+
+
+#A test run for which_gitscripts function
 which_gitscripts("Graphs") |> head()
 
 #The weather API
 #https://www.weatherapi.com/
 
-key <- "key=6a6b8919bce04b4e80591026221905&q="
-
-#Create url
-weather1 <- "http://api.weatherapi.com/v1/current.json?"
-place <- "Munich"
-weather2 <- "&aqi=no"
-
-#Insert also a valid key
-weather_url <- paste0(weather1, key, place, weather2)
-
-#Get response 
-response <- httr::GET(weather_url)
-response_text <- httr::content(response, as="parsed")
-
-#Prepare response
-df <- response_text$current
-df <- as.data.frame(df)
 
 
-#Today is 
-Sys.Date()
-#The temperature (in Celsius)
-df$temp_c
-#And how is the weather?
-df$condition.text
 
+
+
+
+## #Info box: The plumber package#################################################
+## #This code does not work here, create first a new plumber API and insert the
+## #following code as a minimal example
 ## library(dplyr)
 ## library(gapminder)
 ## 
 ## return_gdp <- function(x) {
 ##   gapminder  |>
-##   filter(
-##     year == 2007,
-##     country == x
-##   ) |>
-##   summarize(gdp = round(pop * gdpPercap, 2))
+##     filter(
+##       year == 2007,
+##       country == x
+##     ) |>
+##     summarize(gdp = gdpPercap)
 ## }
 ## #Which country?
 ## return_gdp("Spain")
@@ -524,25 +474,18 @@ df$condition.text
 ## #* @param country
 ## #* @post /calculate_gdp
 ## #Insert FUN here
+## #Info box: The plumber package#################################################
 
-## # 11.3 Combining data ##########################################################
+# 11.3 Combining data ##########################################################
 
-## #Long and wide###
-## long_wide()
 
-knitr::include_graphics('images/Fig_1105.pdf')
+
+
 
 library(gapminder)
 head(gapminder)
 
-## #how many countries
-## country <- dplyr::distinct(gapminder, country)|> pull(country)
-## length(country)
-## 
-## start <- min(dplyr::distinct(gapminder, year))
-## start
-## end <- max(dplyr::distinct(gapminder, year))
-## end
+
 
 #A data frame (df) to illustrate:
 df <- tribble(
@@ -554,7 +497,7 @@ df <- tribble(
 )
 
 
-#pivot_wider convert long data into the wide format
+#pivot_wider converts long data into the wide format
 library(tidyr)
 
 df |>
@@ -562,12 +505,13 @@ df |>
               values_from = measurement)
 
 df <- tribble(
-  ~country, ~outcome, ~measurement,
-  "Germany",   1, 3.8,
-  "Germany",   2, 83.24,
-  "UK",   1, 2.7,
-  "UK",   2, 67.22
-)
+   ~country, ~outcome, ~measurement,
+  "Germany",        1,          3.8,
+  "Germany",        2,        83.24,
+       "UK",        1,          2.7,
+       "UK",        2,        67.22
+  )
+
 
 
 #Add names prefix
@@ -578,14 +522,14 @@ df |>
     values_from = "measurement"
   )
 
-df <- tibble::tribble(
+df <- tribble(
   ~continent, ~country, ~time, ~x , ~y,
   "Europe",    "UK",          1,  0.78,  0.77,
   "Europe",    "UK",          2,  0.63,  0.98,
-  "Europe",    "UK",          4,  0.07,  0.18,
+  "Europe",    "UK",          3,  0.07,  0.18,
   "Asia",      "Japan",       1,  0.26,  0.69,
   "Asia",      "Japan",       2,  0.07,  0.11,
-  "Asia",      "Japan",       3,  0.16,  0.13
+  "Asia",      "Japan",       4,  0.16,  0.13
   )
 
 
@@ -618,8 +562,7 @@ df |>
     cols = c(`x1`, `x2`, `x3`, `x4`, `x5`),
     names_to = "time",
     values_to = "outcome"
-  ) |> 
-  head()
+  )
 
 ## #Include all countries but -c(continent, country)
 ## df |>
@@ -647,20 +590,17 @@ df |>
   ) |> 
   head()
 
-## #rightleft_join()
-## mutate_data()
 
-knitr::include_graphics('images/Fig_1106.pdf')
 
-## #rightleft_join()
-## mutate_joins1()
 
-knitr::include_graphics('images/Fig_1107.pdf')
 
-## #rightleft_join()
-## mutate_joins2()
 
-knitr::include_graphics('images/Fig_1108.pdf')
+
+
+
+
+
+
 
 #Two example data sets
 df1 <- tribble(
