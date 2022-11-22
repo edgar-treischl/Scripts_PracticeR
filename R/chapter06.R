@@ -1,33 +1,3 @@
-knitr::opts_chunk$set(echo = TRUE)
-
-library(magrittr)
-library(patchwork)
-library(huxtable)
-options(huxtable.knit_print_df = FALSE)
-
-#To get nice numbers for the pdf
-knitr::opts_chunk$set(
-  fig.process = function(filename) {
-    new_filename <- stringr::str_remove(string = filename,
-                                        pattern = "-1")
-    fs::file_move(path = filename, new_path = new_filename)
-    ifelse(fs::file_exists(new_filename), new_filename, filename)
-  }
-)
-
-
-knitr::opts_chunk$set(
-  fig.height = 3.5, fig.path = "images/", cache = TRUE,
-  echo = TRUE, warning = FALSE, message = FALSE, eval = TRUE, out.width='90%',
-  comment = "#>"
-)
-
-#Data saurus, Anscombe, etc:
-#source("R/utils6.R")
-Sys.setenv(lang = "en_US")
-knitr::opts_chunk$set(tidy = "styler")
-
-
 # 6 Analyze data################################################################
 
 #The setup of Chapter 6
@@ -65,12 +35,12 @@ model <- lm(child ~ parent, data = Galton)
 model
 
 #How tall will a child be on average if parents are 68 inches?
-23.9415 + 68 * 0.6463 
+23.9415 + 68 * 0.6463
 
 #Generate example data
-new_data <- data.frame(parent = c(55, 68, 75)) 
+new_data <- data.frame(parent = c(55, 68, 75))
 #Apply the model with predict
-predict(model, new_data) 
+predict(model, new_data)
 
 #Calculate the slope manually
 Galton |>
@@ -78,7 +48,7 @@ Galton |>
          mean_y = mean(child),
          cov  = sum((parent - mean_x)*(child-mean_y)),
          variance_x = sum((parent - mean_x)^2),
-         slope = cov / variance_x 
+         slope = cov / variance_x
          )
 
 #The summary function gives more information about the model
@@ -109,8 +79,8 @@ head(penguins)
 fct_count(penguins$species)
 
 #Create a dummy
-penguins <- penguins |> 
-  mutate(species_bin = if_else(species == 
+penguins <- penguins |>
+  mutate(species_bin = if_else(species ==
                             "Adelie", "Adelie", "Others"))
 
 #Check the data preparation steps
@@ -133,7 +103,7 @@ lm(body_mass_g ~ species, data = penguins)
 
 
 #Relevel the reference group
-penguins$species <- relevel(penguins$species, ref = 2)  
+penguins$species <- relevel(penguins$species, ref = 2)
 
 #Run model again
 lm(body_mass_g ~ species, data = penguins)
@@ -150,7 +120,7 @@ summary(m2)
 ## #Run models
 ## m1 <- lm(body_mass_g ~ species, data = penguins)
 ## m2 <- lm(body_mass_g ~ species + sex, data = penguins)
-## 
+##
 ## #But use huxreg to compare them!
 ## huxtable::huxreg(m1, m2)
 
@@ -168,11 +138,11 @@ summary(m3)
 library(interactions)
 
 #Plot for categorical predictors
-cat_plot(m3, pred = species, modx = sex, 
+cat_plot(m3, pred = species, modx = sex,
          point.shape = TRUE, vary.lty = FALSE)
 
 #Interaction plot
-interact_plot(m3a, pred = bill_length_mm, modx = sex, 
+interact_plot(m3a, pred = bill_length_mm, modx = sex,
               interval = TRUE, plot.points = FALSE)
 
 
@@ -192,10 +162,10 @@ compare_performance(m1, m2,
 ## #Drop observations that will be droped in later steps
 ## penguins <- penguins |>
 ##   tidyr::drop_na(sex)
-## 
+##
 ## #Rerun the model
 ## m1 <- lm(body_mass_g ~ species, data = penguins)
-## 
+##
 
 #Radar plot
 library(see)
@@ -223,7 +193,7 @@ export_summs(model, coefs = coef_names)
 ## export_summs(model, scale = FALSE, coefs = coef_names,
 ##              error_format = "{statistic})",
 ##              to.file = "docx", file.name = "test.docx")
-## 
+##
 
 # 6.3 Visualization techniques #################################################
 
@@ -263,7 +233,7 @@ rstandard(model)[1:3]
 ## library(ggeffects)
 ## #Save prediction
 ## predict_model <- ggpredict(model, terms = "bill_length_mm")
-## 
+##
 ## #Plot scatter plot with residuals
 ## plot(predict_model,
 ##      residuals = TRUE,
@@ -275,7 +245,7 @@ x <- check_heteroscedasticity(model)
 plot(x)
 
 
-#Breusch & Pagan test (1979) 
+#Breusch & Pagan test (1979)
 lmtest::bptest(model)
 
 ## #check_heteroscedasticity interprets it
@@ -295,9 +265,9 @@ check_collinearity(model)
 check_normality(model)
 
 #Cluster robust model from estimatr
-cluster_model <- lm_robust(flipper_length_mm ~ bill_length_mm + sex, 
+cluster_model <- lm_robust(flipper_length_mm ~ bill_length_mm + sex,
                            data = penguins,
-                           clusters = island) 
+                           clusters = island)
 
 summary(cluster_model)
 
@@ -305,9 +275,9 @@ summary(cluster_model)
 ## lmtest::dwtest(model)
 
 #Two example models
-m1 <- lm(flipper_length_mm ~ bill_length_mm, 
+m1 <- lm(flipper_length_mm ~ bill_length_mm,
          data = penguins)
-m2 <- lm(flipper_length_mm ~ bill_length_mm + sex, 
+m2 <- lm(flipper_length_mm ~ bill_length_mm + sex,
          data = penguins)
 
 #Left: plot_summs from jtools returns a dot-and-whisker
@@ -327,7 +297,7 @@ library(dotwhisker)
 dwplot(m1)
 
 #Right: add a reference line
-dwplot(m1, 
+dwplot(m1,
        vline = geom_vline(xintercept = 0,
                             color = "black"))
 
@@ -339,7 +309,7 @@ dwplot(list(m1, m2))
 
 #Sort/resort models via model_order
 dwplot(list(m1, m2),
-       model_order = c("Model 2", "Model 1")) 
+       model_order = c("Model 2", "Model 1"))
 
 
 
@@ -350,7 +320,7 @@ dwplot(m2,
 
 #Relabel predictors
 dwplot(m2) |>
-  relabel_predictors(c(bill_length_mm = "Bill length", 
+  relabel_predictors(c(bill_length_mm = "Bill length",
                        sexmale = "Male penguins"))
 
 
@@ -359,15 +329,15 @@ dwplot(m2) |>
 #The final plot
 plot <- dwplot(list(m1, m2),
        dot_args = list(size = 2),
-       vline = geom_vline(xintercept = 0, 
-                          colour = "black", 
+       vline = geom_vline(xintercept = 0,
+                          colour = "black",
                           linetype = 2),
        model_order = c("Model 1", "Model 2")) |>
-  relabel_predictors(c(bill_length_mm = "Bill length", 
+  relabel_predictors(c(bill_length_mm = "Bill length",
                        sexmale = "Male penguins"))+
   ggtitle("Results")+
   theme_minimal(base_size = 12)+
-  xlab("Effect on body mass") + 
+  xlab("Effect on body mass") +
   ylab("Coefficient") +
   theme(plot.title = element_text(face = "bold"),
         legend.title = element_blank()) +
