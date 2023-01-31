@@ -1,3 +1,8 @@
+#Source file Practice R: Chapter 12
+#Author: Edgar Treischl
+#Source file from: GitHub
+#Updates: None
+
 # 12. Next steps ###############################################################
 
 #Setup Chapter 12
@@ -29,16 +34,16 @@ df <-  tribble(
   )
 
 
-#Create a lag variable 
-df |> 
-  group_by(person)|> 
+#Create a lag variable
+df |>
+  group_by(person)|>
   mutate(income_lag = lag(income))
 
 #Use lubridate to prepare time and date variables
 x <- lakers$date[1]
 x
 
-# The ymd() function convert integers to a date
+# The ymd() function converts integers to a date
 dates <- ymd(x)
 dates
 
@@ -51,30 +56,36 @@ mday(dates)
 #Extract month
 month(dates)
 
-#Extract years
+#Extract year
 year(dates)
 
-#An example data preparation step
-mtcars |> 
-  group_by(cyl) |> 
-  summarise(mpg = mean(mpg, na.rm = TRUE)) |> 
-  arrange(desc(mpg))
+#Establish a connection to the database
+# library(DBI)
+# con <- DBI::dbConnect(drv = odbc::odbc(),
+#                       host = "host",
+#                       port = 3306,
+#                       dbname = "database_name",
+#                       user = "user",
+#                       password = "password")
 
-#Establish an example SQL connection
-library(DBI)
-con <- dbConnect(RSQLite::SQLite(), dbname = ":memory:")
-dbWriteTable(con, "mtcars", mtcars)
-mtcars_sql <- tbl(con, "mtcars")
+#A SQL example:
+#SELECT mpg FROM mtcars LIMIT 3;
 
-#Save the data preparation steps as an object
-library(dbplyr)
-data_prep <- mtcars_sql |> 
-  group_by(cyl) |> 
-  summarise(mpg = mean(mpg, na.rm = TRUE)) |> 
-  arrange(desc(mpg))
 
-#Inspect the SQL query for the last data preparation step
-data_prep |> show_query()
+#Establish a connection to the local memory
+con_myDB <- dbConnect(drv = RSQLite::SQLite(),
+                 dbname = ":memory:")
+
+#Write a table into the "database"
+dbWriteTable(conn = con_myDB,
+             name = "mtcars",
+             value = mtcars)
+
+#List all tables
+dbListTables(con_myDB)
+
+#Get SQL Query
+dbGetQuery(con_myDB, 'SELECT mpg FROM mtcars LIMIT 3;')
 
 # 12.2 Data analysis ###########################################################
 
@@ -82,69 +93,62 @@ data_prep |> show_query()
 library(titanic)
 
 #Select variables, for example:
-titanic_df <- titanic::titanic_train |> 
-  dplyr::select(Survived, Sex, Age)
+titanic_df <- titanic::titanic_train |>
+  dplyr::select(Survived, Sex)
 
-#inspect data
+#Inspect
 head(titanic_df)
 
 #Minimal code to run a logistic regression
-logit_model <- glm(Survived ~ Sex, family = binomial(link = 'logit'), 
+logit_model <- glm(Survived ~ Sex, family = binomial(link = 'logit'),
                    data = titanic_df)
 
 #Print a summary
 summary(logit_model)
 
-#Inspect odds ratios
-logit_model|>
-  parameters::parameters(exponentiate = TRUE)
+#Inspect odds ratios with the parameters package
+logit_model|> parameters::parameters(exponentiate = TRUE)
 
-#Inspect marginal effects
+#Inspect marginal effects with the margins package
 logit_margins <- margins::margins(logit_model)
 summary(logit_margins)
 
+#The tidymodels website
+#https://www.tidymodels.org/
+
 # 12.3 Visualization ###########################################################
 
-#Left Plot: geom_text 
-gapminder %>% filter(year == "2007" & continent == "Europe") %>% 
-  ggplot(aes(gdpPercap, lifeExp, label = country)) +
-  geom_point(color = "red")+ 
-  geom_text(size = 2) + #geom_text
-  labs(title = "A: geom_text()")
+#Gapminder data
+gapminder_df <- gapminder |>
+  filter(year == "2007" & continent == "Europe")
+
+#Left Plot: geom_text
+ggplot(gapminder_df, aes(gdpPercap, lifeExp, label = country)) +
+  geom_point(color = "red")+
+  labs(title = "A: geom_text()")+
+  geom_text()
 
 #Right plot: geom_text_repel
-gapminder %>% filter(year == "2007" & continent == "Europe") %>% 
-  ggplot(aes(gdpPercap, lifeExp, label = country)) +
+ggplot(gapminder_df, aes(gdpPercap, lifeExp, label = country)) +
   geom_point(color = "red")+
-  coord_cartesian(clip = "off") + 
-  geom_text_repel(size = 2) + #geom_text_repel
-  labs(title = "B: geom_text_repel()")
+  labs(title = "B: geom_text_repel()")+
+  geom_text_repel()
 
 
 
 
+#Inspect example shiny apps: 01_hello, 02_text, etc.
+library(shiny)
+#runExample("01_hello")
 
 
-## #Inspect example shiny apps
-## library(shiny)
-## runExample("01_hello")
-## runExample("02_text")
-## runExample("03_reactivity")
-
-## #Mastering Shiny:
-## PracticeR::show_link("master_shiny")
+#Mastering Shiny:
+#PracticeR::show_link("master_shiny")
 
 # 12.4 Reporting ###############################################################
 
-## #Quarto website:
-## #https://quarto.org/
+#Quarto website:
+#https://quarto.org/
 
-## #chrome_print prints the file as a PDF
-## pagedown::chrome_print("my_presentation.html")
-
-
-
-
-
-#Session info of Practice R
-sessioninfo::session_info()
+#chrome_print exports the file as a PDF
+#pagedown::chrome_print("my_presentation.html")

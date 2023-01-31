@@ -1,3 +1,8 @@
+#Source file Practice R: Chapter 3
+#Author: Edgar Treischl
+#Source file from: GitHub
+#Updates: None
+
 # 3 Data exploration ###########################################################
 
 #Setup of chapter 3
@@ -11,23 +16,20 @@ library(PracticeR)
 library(summarytools)
 library(tibble)
 
+# 3.1 Categorical variables ####################################################
+
 #Take a glimpse at your data frame!
-df <- PracticeR::gssm5
+df <- PracticeR::gss5
 glimpse(df)
 
-#Use $ for column vectors
+#Inspect the structure of a variable with $
 str(df$sex)
 
 #head shows the first 6 rows of the data as default
-head(df)
+head(df, n = 3)
 
-#Last n elements
-tail(df, n = 3)
-
-## #View the entire data set
-## tibble::view(gssm5)
-
-# 3.1 Categorical variables ####################################################
+#View the data set
+#View(gss5)
 
 #The first five observations of sex
 df$sex[1:5]
@@ -41,20 +43,14 @@ freq(df$sex)
 
 #Count sex
 count_sex <- table(df$sex)
-#Left plot
+
+#Left bar plot
 barplot(count_sex)
 
-#Right plot
-#The bar plot with title and label adjustments
+#Right bar plot
 barplot(count_sex,
         main="Sex",
-        ylab="Count") 
-
-
-
-
-
-
+        ylab="Count")
 
 
 
@@ -62,27 +58,10 @@ barplot(count_sex,
 library(DataExplorer)
 plot_bar(df)
 
-# Infobox: The ggblanket package ###############################################
-library(ggplot2)
-library(ggblanket)
-
-#Left plot
-gg_bar(df, x = sex)
-
-#Right plot
-gg_histogram(df, x = age)
-
-#What does ggblanket return?
-my_plot <- gg_bar(df, x = sex)
-class(my_plot)
-# Infobox: The ggblanket package ###############################################
-
-
-
-#Levels returns the levels of a factor variable
+#Inspect the levels of a factor variable
 levels(df$sex)
 
-#Typeof returns the R storage mode
+#typeof returns the storage mode
 typeof(df$sex)
 
 #Create an example factor variable
@@ -90,28 +69,28 @@ fruit <- factor(c("pear", "apple", "apple", "cherry", "apple"))
 fruit
 
 #Create a rating variable
-rating <- factor(c(rep("low", 10), 
-                   rep("high", 2), 
+rating <- factor(c(rep("low", 10),
+                   rep("high", 2),
                    rep("medium",7)
                    ))
 #Inspect the order
 levels(rating)
 
 #Set the levels
-rating <- factor(rating, 
+rating <- factor(rating,
                  levels = c("low", "medium", "high"))
 
 levels(rating)
 
 #A messy factor variable
-sex <- factor(c(rep("F", 10), 
+sex <- factor(c(rep("F", 10),
                 rep("M",7)
                    ))
 #A messy table
 table(sex)
 
 #Create or adjust the labels
-sex <- factor(sex, 
+sex <- factor(sex,
               levels = c("F", "M"),
               labels = c("female", "male"))
 
@@ -122,7 +101,7 @@ table(sex)
 #Minima
 min(c(1, 5, 6, 8, 11))
 #Median
-median(c(1, 5, 6, 8, 11)) 
+median(c(1, 5, 6, 8, 11))
 #Maxima
 max(c(1, 5, 6, 8, 11))
 #Standard deviation
@@ -145,19 +124,18 @@ summary(df[1:4])
 
 #The descr() function returns descriptive summary statistics
 library(summarytools)
-descr(gssm2016, 
-      stats = c("min", "mean", "sd", "max"),
-      transpose = TRUE)
+descr(df,
+      stats = c("min", "mean", "sd", "max"))
 
-#Left plot
-hist(df$age) 
+#Left histogram
+hist(df$age)
 
-#Right plot
-hist(df$age, 
+#Right histogram
+hist(df$age,
      breaks = 6,
      freq=FALSE,
      main="Density",
-     xlab = "Age") 
+     xlab = "Age")
 
 
 
@@ -165,67 +143,72 @@ hist(df$age,
 DataExplorer::plot_histogram(df)
 
 
+#Left box plot
+boxplot(df$income,
+        horizontal = TRUE)
+
+#Right box plot
+boxplot(income~sex,
+        data=df)
 
 
 
-#Toy variable
-x <-  factor(c("Female", "Male"))
-y <- c(3.11, 2.7)
 
-as.numeric(x)
-as.character(y)
+#Create a data report
+# library(DataExplorer)
+# create_report(insert_data,
+#               output_file = "my_report.pdf",
+#               output_format = "pdf_document")
 
-#Income as numeric
-df$income <- as.numeric(gssm5$income16)
+# Infobox: The ggblanket package ###############################################
+library(ggplot2)
+library(ggblanket)
 
 #Left plot
-boxplot(df$income,
-        horizontal = TRUE) 
+gg_bar(df, x = sex)
 
 #Right plot
-boxplot(income~sex, 
-        data=df) 
+gg_histogram(df, x = age)
+
+#What does ggblanket return?
+my_plot <- gg_bar(df, x = sex)
+class(my_plot)
 
 
-
-
-## #Create a data report
-## library(DataExplorer)
-## create_report(data,
-##               output_file = "my_report.pdf",
-##               output_format = "pdf_document")
 
 # 3.3 Explore effects ##########################################################
 
 #The levels of happy
 levels(df$happy)
 
-#Collapse level of a factor variable with fct_collapse
+#Collapse levels of a factor variable with fct_collapse
 x <- c("Pretty Happy", "Not happy", "Very Happy")
-forcats::fct_collapse(x, Happy = c("Pretty Happy", "Very Happy"))
+
+forcats::fct_collapse(x,
+                      Happy = c("Pretty Happy", "Very Happy")
+                      )
 
 #A simple table
 table(df$sex, df$happy)
 
 #A cross table
-summarytools::ctable(x = df$sex, 
+summarytools::ctable(x = df$sex,
                      y = df$happy,
                      prop = "r")
 
 #Boxes are proportional to the number of observations
-spineplot(happy ~ sex, 
+spineplot(happy ~ sex,
           data = df)
 
-
-#Create a scatter plot
+#Create a scatter plot (with filled circles and without a frame)
 plot(y = df$income, x = df$age,
      pch = 20, frame = FALSE)
-#And a regression line
-abline(lm(income ~ age, data = df), 
+#And a red regression line
+abline(lm(income ~ age, data = df),
        col = "red")
 
 
-#By default, R returns Pearson's r if you use the `cor()` function
+#By default, the cor function returns Pearson's r
 cor_value <- cor(df$income, df$age, use = "complete")
 cor_value
 
@@ -233,34 +216,27 @@ cor_value
 library(effectsize)
 interpret_r(cor_value, rules = "cohen1988")
 
-#The correlation function from the correlation package
+#Estimate several correlation coefficients on the fly
 library(correlation)
-results <- correlation(mtcars[1:5])
-results
+correlation(mtcars[1:3])
 
-#A correlation plot example
+#Left plot: A correlation plot example
 library(corrplot)
 corr_matrix <- cor(mtcars)
-
-#Left plot
 corrplot(corr_matrix)
 
 
-#Right plot
 #Estimate p-values
 p_values <- cor.mtest(mtcars, conf.level = 0.95)
-#Corrplot
-corrplot(corr_matrix, 
-         p.mat = p_values$p, 
-         order = 'AOE', 
+
+#Right plot
+corrplot(corr_matrix,
+         order = 'AOE',
+         p.mat = p_values$p,
          type = 'lower',
-         diag=FALSE,
-         addCoef.col ='black', number.cex = 0.8, tl.col = 'black')
-
-
+         diag=FALSE)
 
 ## # Info box: The rpivotTable package ###############################################
-## library(palmerpenguins)
-## library(rpivotTable)
-## rpivotTable(penguins)
-## # Info box: The rpivotTable package ###############################################
+# library(palmerpenguins)
+# library(rpivotTable)
+# rpivotTable(penguins)

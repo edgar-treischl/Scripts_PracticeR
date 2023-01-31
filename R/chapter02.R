@@ -1,17 +1,20 @@
+#Source file Practice R: Chapter 2
+#Author: Edgar Treischl
+#Source file from: GitHub
+#Updates: None
+
 ## # 2.1 Introducing R and RStudio ################################################
 
-#Install R:
+#Download and install R:
 #https://www.r-project.org/
 
-
-
-# Basic operations: +,-,*,/ 
-5 * 5 
+# Basic operations: +,-,*,/
+5 * 5
 #Powers
-3^2              
+3^2
 #Square root
 sqrt(16)
-#Logarithm (base: Euler's number e)
+#Natural logarithm
 log(1)
 #Exponential function
 exp(1)
@@ -23,88 +26,84 @@ print("Hello world")
 #https://posit.co/downloads/
 
 
-
 #Run code via the shortcut (Windows/Mac):
 #Press: <Ctlr/Cmd> + <Enter>
 
 
-
 #Do not forget the quotation marks ("" or '') to print a string
-print(Hello)
+#print(Hello)
 
-## #The getwd() function returns the current working directory
-## getwd()
-## #> [1] "C:/Users/Edgar/R/Practice_R"
-
+#The getwd() function returns the current working directory
+getwd()
 
 
-## #Windows
-## setwd("C:/Users/Edgar/R/Scripts")
-## #Mac
-## setwd("~/R/Scripts/")
 
-## #Copy and run the following code to generate a bar plot!
-## barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
+#Windows
+#setwd("C:/Users/Edgar/R/Scripts")
+#Mac
+#setwd("~/R/Scripts/")
+
+#Copy and run the following code to generate a bar plot!
+barplot(c(a = 22, b = 28, c = 33, d = 40, e = 55))
 
 
 
 #Install a package with:
-#install.packages("name")
+#install.packages("package_name")
 #Caution: The package name needs to be enclosed in quotation marks
 
 
 
-#Remember: Package need to be installed only once.
+#Packages need to be installed only once
 #But: Load a package each time you start a new R session!
 library(palmerpenguins)
 
 
 
+#The devtools package let you install packages from GitHub
+#install.packages("devtools")
+
+#Install the PracticeR package
+#devtools::install_github("edgar-treischl/PracticeR")
 
 
-## #Install the PracticeR package
-## devtools::install_github("edgar-treischl/PracticeR")
-## 
 
 
+#Load a chapter script with show_script()
+#library(PracticeR)
+#show_script("chapter02")
 
-## #Load a chapter script with show_script()
-## library(PracticeR)
-## show_script("chapter02")
+#Show_link opens a browser with the link
+show_link("pr_website", browse = FALSE)
 
-## #Show_link opens a browser with the link
-## show_link("pr_website", browse = FALSE)
-## #> [1] "https://edgar-treischl.github.io/PracticeR/"
+#Run examples from the online help (press ESC to abort)
+example(barplot)
 
-## #Run examples from the online help (press ESC to abort)
-## example(barplot)
+#Ask for help
+?barplot
+#Search for keywords
+#help.search("keyword")
 
-## #Ask for help
-## ?barplot
-## #Search for keywords within the help files
-## help.search("keywords")
-## 
+# Infobox: Vignettes and Rstudio’s Addins ######################################
+#Browse vignettes from a package:
+browseVignettes("dplyr")
+#Inspect a vignette in the viewer by calling its name:
+vignette("dplyr")
+#Edit the code from a vignette:
+edit(vignette("dplyr"))
 
-## # Infobox: Vignettes and Rstudio’s Addins ######################################
-## #Browse vignettes from a package:
-## browseVignettes("dplyr")
-## #Inspect a vignette in the viewer by calling its name:
-## vignette("dplyr")
-## #Edit the code from a vignette:
-## edit(vignette("dplyr"))
-## # Infobox: Vignettes and Rstudio’s Addins ######################################
 
 # 2.2 Base R ###################################################################
 
 #The object result refers to 5*5
-result <- 5*5
+result <- 5 * 5
 result
 
-#R does not print the results of the assignment
+#R does not print the result of the assignment
 (result <- "Hello from the other side!")
 
 
-#ABC of the assignment operator
+#AB(C) of the assignment operator
 a <- 5
 b <- 6
 
@@ -113,11 +112,11 @@ result <- a + b
 result
 
 #Compare objects:
-#Is a greater (>) than (or equal to) b
-a >= b
-
-#Is a less (<) than (or equal to) b
+#Is a less (<) than (or equal to =) b
 a <= b
+
+#Is a greater (>) than (or equal to =) b
+a >= b
 
 #Is a equal to (==) b
 a == b
@@ -125,36 +124,33 @@ a == b
 #Is a not equal to (!=) b
 a != b
 
-#Assign like a Pro, press: 
+#Assign like a Pro, press:
 #<Alt> + <-> (Windows)
 #<Option> + <-> (Unix/Mac)
 #The assignment operator will appear out of nothing
 
-#Keep in mind: No numbers
+#No numbers
 make.names(names="1.wave")
 
-#No special characters
+#No special characters as names
 make.names(names="income_$")
 
-#Try to be specific and provide a descriptive name
+#Even if a name is valid, try to provide a descriptive, short name
 make.names(names="an_object_should_describe_its_content")
 
 #RStudio suggests also the input of a function (e.g. object name)
-#Give it a try and press <TAB> within the brackets of a function
-print("Hello", quote = FALSE)
+my_string <- "Hello"
+print(my_string, quote = FALSE)
 
 #Combine function
 running_number <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 running_number
 
 #Set a start and endpoint
-running_number <- c(1:10) 
+running_number <- c(1:10)
 running_number
 
 #The sequence function
-seq(1:10)
-
-#The by option
 seq(0, 10, by=2)
 
 #Repeat five times
@@ -164,7 +160,7 @@ rep(1:2, times=5)
 rep(1:2, each=5)
 
 ## #The basic structure of a non-functioning function:
-## 
+##
 ## my_fun <- function(x){
 ## #  build the sum of x, divided by n
 ##   }
@@ -173,17 +169,17 @@ rep(1:2, each=5)
 data <- c(3, 2, 1, 5, 8, 12, 1)
 
 #2. Create a function
-return_function<- function(x){
+return_input<- function(x){
   return(x)
 }
 #3. Call and feed the function
-return_function(data)
+return_input(data)
 
 
 #Build the sum
 sum(c(1,2,3))
 
-#Count the length
+#The length
 length(c(1,2,3))
 
 #The mean_function
@@ -197,27 +193,35 @@ mean_function(data)
 #The "real" mean
 round(mean(data), digits = 2)
 
-# 2.3 Data types and structures# ###############################################
+# 2.3 Data types and structures ###############################################
+
+#Inspect the class of vector x
+x <- "Hello world"
+class(x)
+
+x <- c(TRUE, FALSE)
+class(x)
 
 #Create two vectors of identical length
-x<- c(1, 2, 3, 4)
-y<- c("a", "a", "a", "a")
+sex <- c("Men", "Women")
+age <- c(19, 28)
 
 #Combine them as data.frame
-df <- data.frame(x, y)
+df <- data.frame(sex, age)
 df
 
 #Create a tibble
 library(tidyr)
-tibble(x = c(1, 2, 3, 4), 
-       y = c("a", "a", "a", "a"))
+tibble(sex = c("Men", "Women"),
+       age = c(19, 28)
+       )
 
 
 #Transposed tibbles
 tribble(
-  ~sex, ~y, ~birth,
-  "Men", 16.2, "1976-10-09",
-  "Women", 22.7, "1981-01-06"
+  ~sex, ~age,
+  "Men", 19,
+  "Women", 28
 )
 
 #R recycles vectors
@@ -227,21 +231,12 @@ data.frame(a = 1:6, b = 1:3, c = 1:2)
 tibble(a = 1:6, b = 1:3, c = 1:2)
 
 #A list may combine heterogeneous input
-my_list <- list("numbers" = 1:10, 
-                "letters" = letters[1:3], 
+my_list <- list("numbers" = 1:10,
+                "letters" = letters[1:3],
                 "names" = c("Bruno", "Justin", "Miley", "Ariana") )
 my_list
 
-#Example data
-df <- tibble::tribble(
-  ~names, ~birthyear, ~sex,
-  "Bruno", 1985, "male",
-  "Justin", 1994, "male",
-  "Miley", 1992, "female",
-  "Ariana", 1993, "female"
-)
-
-#So, how do we slice x?
+#How do we slice a vector?
 x <- c("Bruno", "Justin", "Miley", "Ariana")
 
 #The first element
@@ -252,14 +247,23 @@ x[3]
 x[-3]
 #From the second to the third element
 x[2:3]
-#Get (slice) a column vector with $
-df$names
+
+#Example data
+df <- tibble::tribble(
+    ~names, ~year,     ~sex,
+   "Bruno",  1985,   "male",
+  "Justin",  1994,   "male",
+   "Miley",  1992, "female",
+  "Ariana",  1993, "female"
+)
+
+
+#The first row and the first column
+df[1, 1]
 
 #The first row
 df[1, ]
 
-#The first row and the first column
-df[1, 1]
 #The first column
 df[ , 1]
 
@@ -268,6 +272,9 @@ df[1:2, ]
 #All elements except the first row
 df[-1, ]
 
+#Get (slice) a column vector with $
+df$names
+
 #Consider what my_list contains
 my_list
 
@@ -275,7 +282,7 @@ my_list
 my_list[1]
 
 
-#Returns the values of the first list
+#Get the values of the first list
 my_list[[1]]
 
 #First three elements of the first list
@@ -285,15 +292,15 @@ my_list[[1]][1:3]
 my_list[1][1:3]
 
 #Slice/subset of the data
-adelie_df <- penguins[penguins$species == "Adelie", ]
+adelie_data <- penguins[penguins$species == "Adelie", ]
 
 #Number of rows
-nrow(adelie_df)
+nrow(adelie_data)
 
 #Number of columns
-ncol(adelie_df)
+ncol(adelie_data)
 
-## #The dplyr::filter function
-## library(dplyr)
-## adelie_df <- filter(penguins, species == "Adelie")
-## 
+#The dplyr::filter function
+#library(dplyr)
+#adelie_data <- filter(penguins, species == "Adelie")
+
