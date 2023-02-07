@@ -452,6 +452,9 @@ penguins %>%
 #Visit the purrr website:
 #https://purrr.tidyverse.org/
 
+#Run an R script automatically and on schedule
+#With the cronR package (Windows: taskscheduleR)
+
 # 10 Summary ###################################################################
 
 #R for Data Science
