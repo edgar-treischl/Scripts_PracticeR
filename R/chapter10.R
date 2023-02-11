@@ -97,9 +97,18 @@ cor_xy <- penguins |>
 
 cor_xy
 
+#########
+#NOTE: The aes_string function is soft-deprecated, but you can
+#achieve the same results with tidy evaluation (how expressions
+#and variables in the code are evaluated)
+
 #Insert params via the aes_string function
-ggplot(penguins, aes_string(x = params$x,
-                            y = params$y)) +
+# ggplot(penguins, aes_string(x = params$x,
+#                             y = params$y)) +
+#   geom_point()
+
+ggplot(penguins, aes(x = .data[[params$x]],
+                     y = .data[[params$y]])) +
   geom_point()
 
 
