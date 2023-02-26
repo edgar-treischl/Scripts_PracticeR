@@ -110,8 +110,8 @@ myVar <- 1
 #Upper_Camel
 MyVar <- 1
 
-#kebab-case (hmm-mmmm)
-my-var <- 1
+#kebab-case (hmm-mmmm, but not allowed in R)
+#my-var <- 1
 
 #Rename variable: new_name = variable
 #dplyr::rename(iris, sepal_length = Sepal.Length)
