@@ -1,6 +1,6 @@
 #Source file Practice R: Chapter 4
 #Author: Edgar Treischl
-#Source file from: GitHub
+#Source file from: PracticeR package
 #Updates: None
 
 # 4 Data Manipulation ##########################################################
@@ -38,10 +38,10 @@ filter(mtcars, am == 0 & hp > 200)
 filter(mtcars, hp >= 250 | mpg > 25)
 
 
-#Arrange in an ascending order
+#Arrange in an ascending order 
 arrange(df, hp)
 
-#Arrange in a descending order
+#Arrange in a descending order 
 arrange(df, desc(hp))
 
 #Select mpg and hp
@@ -62,13 +62,13 @@ hp <- pull(df, hp)
 is.vector(hp)
 
 #Create a small(er) subset
-df_small <- select(df, hp)
+df_small <- select(df, hp) 
 head(df_small)
 
 #Mutate and create new variables
 conversion <- 0.74570
 
-mutate(df_small,
+mutate(df_small, 
        kw = hp * conversion,
        hp_new = round(kw * 1.34102, 2))
 
@@ -80,7 +80,7 @@ transmute(mtcars,
 
 
 #Summarize variables
-df |>
+df |> 
   summarize(mean_hp = mean(hp))
 
 #Group by variables
@@ -90,7 +90,7 @@ compare_group <- group_by(df, am)
 summarize(compare_group, hp_mean = mean(hp))
 
 #Use the pipe operator to combine steps
-df |>
+df |> 
   group_by(am) |>
   summarize(
     mean_hp = mean(hp)
@@ -103,26 +103,26 @@ library(PracticeR)
 head(gss2016)
 
 #First attempts ...
-gss2016 |>
-  mutate(age_mean = mean(age))|>
+gss2016 |> 
+  mutate(age_mean = mean(age))|> 
   head()
 
 #Select variables that are needed ...
-gss2016 |>
-  select(age, income_rc, partners, happy)|>
+gss2016 |> 
+  select(age, income_rc, partners, happy)|> 
   mutate(age_mean = mean(age)
-  )|>
+  )|> 
   head()
 
 #An example data
-missing_example <- data.frame(x = c(1, NA, 3, NA))
+missing_example <- data.frame(x = c(1, NA, 3, NA)) 
 
 #Drop_na drops NA
 tidyr::drop_na(missing_example, x)
 
 #Combine steps ...
-df <- gss2016 |>
-  select(age, income_rc, partners, happy) |>
+df <- gss2016 |> 
+  select(age, income_rc, partners, happy) |> 
   drop_na() |>
   mutate(age_mean = mean(age)
   )
@@ -130,17 +130,17 @@ df <- gss2016 |>
 head(df)
 
 #Relocate variables to get a better overview
-df |>
-  relocate(age_mean, .after = age)
+df |> 
+  relocate(age_mean, .after = age) 
+  
 
-
-#Instead of selecting variables, create a variable list
+#Instead of selecting variables, create a variable list 
 varlist <- c("income_rc", "partners", "happy", "age")
 
 #Include relocate in the mutate step
-df |>
-  select(all_of(varlist)) |>
-  drop_na() |>
+df |> 
+  select(all_of(varlist)) |> 
+  drop_na() |> 
   mutate(age_mean = round(mean(age), 2), .before = age
   )
 
@@ -167,20 +167,20 @@ sex <- c(0, 1, 0)
 if_else(sex == 0, "female", "male")
 
 #Insert if_else in the mutation step
-df |>
-  select(age, age_mean)|>
-  mutate(older = if_else(age > age_mean, "older", "younger"),
+df |> 
+  select(age, age_mean)|> 
+  mutate(older = if_else(age > age_mean, "older", "younger"), 
          .after = age_mean)
 
 #Chain steps with gss2016 data
-gss2016 |>
+gss2016 |> 
   drop_na(age)|>
-  transmute(age,
+  transmute(age, 
             older = if_else(age > mean(age), TRUE, FALSE))
 
 
 #First case_when attempt
-df |>
+df |> 
   transmute(age,
             older_younger = case_when(
               age <= 17             ~ "younger",
@@ -190,7 +190,7 @@ df |>
 #The case_when logic
 x <- data.frame(age = c(17, 77, 51, 24))
 
-x |>
+x |> 
   transmute(age,
             older_younger = case_when(
               age <= 17   ~ "younger",
@@ -198,14 +198,14 @@ x |>
               TRUE        ~ "in-between"))
 
 #Between selects observations between a certain range
-df |>
+df |> 
   transmute(age,
             age_filter = between(age, 18, 65))
 
 #Restrict the analysis sample
-df |>
+df |> 
   transmute(age,
-            age_filter = between(age, 18, 65))|>
+            age_filter = between(age, 18, 65))|> 
   filter(age_filter == "TRUE")
 
 #Recode with if_else
@@ -228,9 +228,23 @@ recode_factor(df$sex , m = "Men", f = "Women")
 #Recode a numerical variable
 recode(df$sex_num , `1` = 1, `2` = 0)
 
+##################################
+#Note: recode was superseded in favor of case_match and case_when
+case_match(
+  df$sex,
+  "m" ~ "Male",
+  "f" ~ "Female",
+)
+
+case_when(
+  df$sex %in% c("m") ~ "Male",
+  df$sex %in% "f" ~ "Female"
+)
+##################################
+
 #Create new variables to check if any errors are introduced
-df |>
-  select(sex)|>
+df |> 
+  select(sex)|> 
   mutate(sex_new = if_else(sex == "f", "female", "male"))
 
 #Calculate a mean
@@ -248,14 +262,14 @@ summarize(mtcars, across(everything(), mean))
 head(mtcars)
 
 #Augment your dplyr skills with further packages
-mtcars |>
-  tibble::rownames_to_column(var = "car") |>
+mtcars |> 
+  tibble::rownames_to_column(var = "car") |> 
   head()
 
 #Include your base R skills
-mtcars |>
-  select(mpg)|>
-  arrange(mpg)|>
+mtcars |> 
+  select(mpg)|> 
+  arrange(mpg)|> 
   mutate(running_number = 1:nrow(mtcars)
          ) |>
   head()
@@ -328,7 +342,7 @@ df <-
     min = min(hp)
   )
 
-#Version B:
+#Version B: 
 df<-mtcars|>group_by(am)|>
   summarize(
     median_hp = median(hp), count = n(), sd = sd(hp), min = min(hp)
@@ -360,7 +374,7 @@ df<-mtcars|>group_by(am)|>
 
 #Insert fun and press TAB to insert the fun(ction) snippet
 # name <- function(variables) {
-#
+# 
 # }
 
 #Use edit_rstudio_snippets() to edit your snippets directly
